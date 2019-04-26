@@ -1,6 +1,6 @@
-class WatermarkService:
+class CheckService:
     def check_image(self):
         pass
 
-    def set_watermark(self):
+    def protect_image(self):
         pass
