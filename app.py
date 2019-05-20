@@ -1,18 +1,20 @@
 import os
-import sqlite3
-from flask import Flask, request, session, g, redirect, url_for, render_template, flash
+from flask import Flask, request, session, g, redirect, url_for, render_template, flash, json
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 app.config.update(DEBUG=True, SECRET_KEY='secretkey',
                   USERNAME='admin', PASSWORD='admin')
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:123@localhost:5432/socialNetwork'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 db = SQLAlchemy(app)
 
 from models import user
 
-db.create_all()
+#db.create_all()
 
+
+# db.session.commit()
 
 @app.route('/')
 def home():
@@ -21,7 +23,7 @@ def home():
 
 @app.route('/reg', methods=['GET', 'POST'])
 def reg():
-    # session.pop('logged_in', None)
+    session.pop('logged_in', None)
     if request.method == 'POST':
         _name = request.form['username']
         _password = request.form['password']
@@ -45,7 +47,7 @@ def login():
     if request.method == 'POST':
         _name = request.form['username']
         _password = request.form['password']
-        data = user.User.query.filter_by(username=_name).all()
+        data = user.User.query.filter_by(username =_name).all()
         if data == [] or not data[0].checkPas(_password):
             flash('Invalid username or password ')
         else:
@@ -62,6 +64,9 @@ def logout():
     flash('You were logged out')
     return render_template('home.html')
 
+
+from services.notificationService import mod as notModule
+app.register_blueprint(notModule)
 
 if __name__ == '__main__':
     app.debug = True
