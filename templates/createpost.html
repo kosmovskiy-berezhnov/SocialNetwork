@@ -1,0 +1,18 @@
+{% extends "layout.html" %}
+{% block body %}
+Create new unique post!
+<form action="{{ url_for('create_post.addtext') }}" method="post">
+    <dl>
+        <dt>Add text
+        <dd><textarea name=text rows=5 cols=40></textarea>
+        <dd><input type=submit value=Share>
+    </dl>
+    <button type="submit">Load image</button>
+</form>
+
+<form action="{{ url_for('create_post.addimage') }}" method="post" enctype="multipart/form-data">
+    <p>Load picture</p>
+    <p><input type="file" name="pic" enctype="multipart/form-data"></p>
+    <dd><input type=submit value=Load>
+</form>
+{% endblock %}

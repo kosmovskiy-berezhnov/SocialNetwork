@@ -3,12 +3,13 @@ from app import db
 from sqlalchemy.dialects.postgresql import JSON
 
 class User(db.Model):
-    __tablename__ = "users"
+    __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String(30), unique=True, nullable=False)
     _rating = db.Column(db.String(30), nullable=False)
     password = db.Column(db.String(30),nullable=False)
     _notifications = db.Column(JSON, nullable=True)
+    children = db.relationship("post", backref = 'users')
     def __init__(self, username, password):
         self.username = username
         self.password = password
@@ -31,5 +32,4 @@ class User(db.Model):
         pass
     def checkPas (self, pas):
         return self.password == pas
-
 db.create_all()

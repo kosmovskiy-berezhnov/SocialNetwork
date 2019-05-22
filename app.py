@@ -10,6 +10,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 db = SQLAlchemy(app)
 
 from models import user
+from models import post
 
 #db.create_all()
 
@@ -65,8 +66,10 @@ def logout():
     return render_template('home.html')
 
 
-from services.notificationService import mod as notModule
-app.register_blueprint(notModule)
+from services.notificationService import mod as notifModule
+from services.content_creationService import mod as creconModule
+app.register_blueprint(notifModule)
+app.register_blueprint(creconModule)
 
 if __name__ == '__main__':
     app.debug = True

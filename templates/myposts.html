@@ -1,0 +1,33 @@
+{% extends "layout.html" %}
+{% block body %}
+This is your posts:
+<input type="button" value="Create new post" id="show">
+
+<dialog background-color=rgba(0, 0, 0, 0.8)>
+    <p>Enter title for your post. If you have html page, you should attach it below</p>
+    <form action="{{ url_for('create_post.createposts') }}" method=post>
+        <dl>
+            <dt>Title:
+            <dd><input type=text name=title required>
+            <dt>Html page(not required):
+            <dd><input type=text name=html_page>
+            <dd><input type=submit value=Create>
+                <button id="close">Cancel</button>
+        </dl>
+    </form>
+</dialog>
+
+<script type=text/javascript>
+var dialog = document.querySelector('dialog');
+document.querySelector('#show').onclick = function() {
+  dialog.showModal();;
+};
+document.querySelector('#close').onclick = function() {
+  dialog.close();
+};
+
+
+
+
+</script>
+{% endblock %}
