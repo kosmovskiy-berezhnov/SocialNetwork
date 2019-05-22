@@ -1,6 +1,7 @@
 from app import db
 from sqlalchemy.dialects.postgresql import JSON
 from datetime import datetime
+from user import user_post
 
 class Post(db.Model):
     __tablename__ = 'posts'
@@ -9,7 +10,7 @@ class Post(db.Model):
     rating = db.Column(db.Integer, nullable=False)
     creation_date = db.Column(db.Date, nullable=False)
     html_page = db.Column(db.Text)
-    #author = db.Column(db.String(30), db.ForeignKey("users.username"), nullable=False)
+    posts = db.relationship("User", secondary=user_post, backpopulates='users')
     comments = None
 
     def __init__(self,title,html_page,author):
