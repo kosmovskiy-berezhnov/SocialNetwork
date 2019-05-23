@@ -1,3 +1,4 @@
+
 import os
 from flask import Flask, request, session, g, redirect, url_for, render_template, flash, json
 from flask_sqlalchemy import SQLAlchemy
@@ -6,71 +7,32 @@ app = Flask(__name__)
 app.config.update(DEBUG=True, SECRET_KEY='secretkey',
                   USERNAME='admin', PASSWORD='admin')
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:123@localhost:5432/socialNetwork'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
-from models import user
-from models import post
-
-#db.create_all()
-
-
-# db.session.commit()
 
 @app.route('/')
 def home():
     return render_template('home.html')
 
 
-@app.route('/reg', methods=['GET', 'POST'])
-def reg():
-    session.pop('logged_in', None)
-    if request.method == 'POST':
-        _name = request.form['username']
-        _password = request.form['password']
-        data = user.User.query.filter_by(username=_name).all()
-        if data != []:
-            flash('This username has already exist!')
-            return render_template('registration.html')
-        else:
-            flash('Success')
-            reg = user.User(_name, _password)
-            db.session.add(reg)
-            db.session.commit()
-            session['logged_in'] = True
-            session['name'] = _name
-            return render_template('home.html')
-    return render_template('registration.html')
+from services import notificationService
+from services import content_creationService
+from services import registrationService
+from services import authorizationService
 
+app.register_blueprint(notificationService.mod)
+app.register_blueprint(content_creationService.mod)
+app.register_blueprint(registrationService.mod)
+app.register_blueprint(authorizationService.mod)
 
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    if request.method == 'POST':
-        _name = request.form['username']
-        _password = request.form['password']
-        data = user.User.query.filter_by(username =_name).all()
-        if data == [] or not data[0].checkPas(_password):
-            flash('Invalid username or password ')
-        else:
-            session['logged_in'] = True
-            session['name'] = _name
-            flash('You were logged in')
-            return render_template('home.html')
-    return render_template('login.html')
-
-
-@app.route('/logout')
-def logout():
-    session.pop('logged_in', None)
-    flash('You were logged out')
-    return render_template('home.html')
-
-
-from services.notificationService import mod as notifModule
-from services.content_creationService import mod as creconModule
-app.register_blueprint(notifModule)
-app.register_blueprint(creconModule)
+#db.drop_all()
+#db.create_all()
 
 if __name__ == '__main__':
     app.debug = True
     app.run(host='127.0.0.1', port=5000, debug=True)
+
+
+
+

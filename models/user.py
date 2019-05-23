@@ -1,32 +1,26 @@
-
-from app import db
 from sqlalchemy.dialects.postgresql import JSON
 
-user_post = db.Table('user_post',
-                     db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
-                     db.Column('post_id', db.Integer, db.ForeignKey('post.id'))
-                     )
+from app import db
+
 
 class User(db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String(30), unique=True, nullable=False)
-    _rating = db.Column(db.String(30), nullable=False)
+    rating = db.Column(db.Integer, nullable=False, default=0)
     password = db.Column(db.String(30), nullable=False)
-    _notifications = db.Column(JSON, nullable=True)
-    posts = db.relationship("Post", secondary=user_post, backpopulates='users')
+    notifications = db.Column(JSON, nullable=True)
 
-    def __init__(self, username, password):
-        self.username = username
-        self.password = password
-        self._rating = 0
+    # def __init__(self, username, password):
+    #   self.username = username
+    #   self.password = password
+    #  self._rating = 0
 
     def get_username(self):
         return self.username
 
     def get_notifications(self):
-        return self._notifications
-
+        return self.notifications
 
     def get_rating(self):
         pass
@@ -36,6 +30,6 @@ class User(db.Model):
 
     def subscribe(self, community):
         pass
-    def checkPas (self, pas):
+
+    def checkPas(self, pas):
         return self.password == pas
-db.create_all()
