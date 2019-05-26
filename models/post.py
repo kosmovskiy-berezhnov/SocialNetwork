@@ -7,12 +7,12 @@ from models.user import User
 
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    title = db.Column(db.String(30), unique=True, nullable=False)
+    title = db.Column(db.String(30), nullable=False)
     rating = db.Column(db.Integer, nullable=False, default=0)
     creation_date = db.Column(db.DateTime, nullable=False, server_default=db.func.now())
     html_page = db.Column(db.Text)
     author = db.Column(db.ForeignKey(User.username), nullable=False)
-    authorrel = db.relationship(User, lazy="joined", backref="posts")
+    authorrel = db.relationship(User, lazy="joined", backref="authorrel", cascade='all,delete')
     comments = None
 
     #def __init__(self,title,html_page,author):

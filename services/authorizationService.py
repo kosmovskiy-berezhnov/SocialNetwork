@@ -11,11 +11,12 @@ def login():
     if request.method == 'POST':
         _name = request.form['username']
         _password = request.form['password']
-        data = User.query.filter_by(username =_name).all()
-        if data == [] or not data[0].checkPas(_password):
+        data = User.query.filter_by(username =_name).first()
+        if data == None or not data.checkPas(_password):
             flash('Invalid username or password ')
         else:
             session['logged_in'] = True
+            session['user_id'] = data.id
             session['name'] = _name
             flash('You were logged in')
             return render_template('home.html')
@@ -24,6 +25,6 @@ def login():
 
 @mod.route('/logout')
 def logout():
-    session.pop('logged_in', None)
+    session.clear()
     flash('You were logged out')
     return render_template('home.html')

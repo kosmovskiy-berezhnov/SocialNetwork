@@ -1,0 +1,42 @@
+{% extends "layout.html" %}
+{% block body %}
+<p>This is your communities:</p>
+<input align="right" type="button" value="Create new community" id="show">
+<br>
+<ul class=entries>
+    {% if communities != None %}
+    {% for c in communities %}
+    <li><span class = mtext >{{ c.title }}
+    <form action="{{ url_for('community.unsubscribecommunity') }}" method="post">
+                        <input type="hidden" name="id" value="{{ c.id }}"/>
+                        <button  class = ghost-button type="submit">Unsubscribe</button>
+    </form>
+    </span>
+    </li>
+    {% endfor %}
+    {% endif %}
+</ul>
+
+<dialog background-color=rgba(0, 0, 0, 0.8)>
+    <p>Create community</p>
+    <form action="{{ url_for('community.createcommunity') }}" method=post>
+        <dl>
+            <dt>Title:
+            <dd><input type=text name=title required>
+            <dt>Type:
+            <dd><input type=text name=comtype required>
+            <dd><input type=submit value=Create>
+                <button id="close">Cancel</button>
+        </dl>
+    </form>
+</dialog>
+<script type=text/javascript>
+var dialog = document.querySelector('dialog');
+document.querySelector('#show').onclick = function() {
+  dialog.showModal();;
+};
+document.querySelector('#close').onclick = function() {
+  dialog.close();
+};
+</script>
+{% endblock %}

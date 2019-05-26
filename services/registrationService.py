@@ -23,6 +23,7 @@ def reg():
             reg = User(username=_name, password=_password)
             db.session.add(reg)
             db.session.commit()
+            session['user_id'] = User.query.filter_by(username=_name).first().id
             session['logged_in'] = True
             session['name'] = _name
             return render_template('home.html')
