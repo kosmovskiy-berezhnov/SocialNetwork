@@ -13,10 +13,10 @@
 <div class=page>
     <h1>{% print(session.blog) %}</h1>
     <div class=metanav>
-        {% if not session.logged_in %}
+        {% if not user_auth %}
         <a href="{{ url_for('authorization.login') }}">log in</a>
         <br>
-        <a href="{{ url_for('registration.reg') }}">reg</a>
+        <a href="{{ url_for('registration.register') }}">register</a>
         {% else %}
         <a href="{{ url_for('authorization.logout') }}">log out</a>
         <h3> {% print(session.name) %} </h3>
