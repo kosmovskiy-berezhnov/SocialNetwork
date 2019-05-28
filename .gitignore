@@ -14,7 +14,7 @@ lib64/
 parts/
 sdist/
 var/
-
+static/images/
 instance/
 .webassets-cache
 

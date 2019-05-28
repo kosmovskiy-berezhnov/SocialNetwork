@@ -6,12 +6,13 @@
 <ul class=entries>
     {% if communities != None %}
     {% for c in communities %}
-    <li><span class = mtext >{{ c.title }}
-    <form action="{{ url_for('community.unsubscribecommunity') }}" method="post">
-                        <input type="hidden" name="id" value="{{ c.id }}"/>
-                        <button  class = ghost-button type="submit">Unsubscribe</button>
-    </form>
-    </span>
+    <li>
+        <div class=mtext><a href="{{ url_for('community.community') }}?val={{c.id}}">{{ c.title }}</a>
+            <form action="{{ url_for('community.unsubscribecommunity') }}" method="post">
+                <input type="hidden" name="id" value="{{ c.id }}"/>
+                <button class=ghost-button type="submit">Unsubscribe</button>
+            </form>
+        </div>
     </li>
     {% endfor %}
     {% endif %}
@@ -24,11 +25,15 @@
             <dt>Title:
             <dd><input type=text name=title required>
             <dt>Type:
-            <dd><input type=text name=comtype required>
+                <select name="comtype">
+                    <option value="private">private</option>
+                    <option value="personal">personal</option>
+                    <option selected value="public">public</option>
+                </select>
             <dd><input type=submit value=Create>
-                <button id="close">Cancel</button>
         </dl>
     </form>
+    <button id="close">Cancel</button>
 </dialog>
 <script type=text/javascript>
 var dialog = document.querySelector('dialog');
@@ -38,5 +43,7 @@ document.querySelector('#show').onclick = function() {
 document.querySelector('#close').onclick = function() {
   dialog.close();
 };
+
+
 </script>
 {% endblock %}
