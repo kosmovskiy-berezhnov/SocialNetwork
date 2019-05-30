@@ -64,7 +64,7 @@ def createcommunity():
         session['com_id'] = newcommunity.id
         db.session.commit()
         return render_template('community.html', posts=newcommunity.community_posts, com=newcommunity,
-                               is_subbed=is_subscribed(g.user, newcommunity))
+                               is_subbed=True)
     return redirect('/mycommunities')
 
 

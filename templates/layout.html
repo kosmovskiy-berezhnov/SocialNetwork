@@ -11,8 +11,10 @@
         </ol>
     </div>
     <div class=page>
-        Search<input type="text" name="search" value="">
-        {% if user_auth == 0 %}
+        <input type="text" name="search" placeholder="Search" size="100" id="findtext">
+        <button class="like-button" id="cancelsearch"><i class="fa fa-times" aria-hidden="true"></i></button>
+        <button class="like-button" type="submit" id="find">Search</button>
+        {% if current_user.is_anonymous %}
         <a href="{{ url_for('authorization.login') }}">log in</a>
         <br>
         Sort<select name="sort">
@@ -29,7 +31,7 @@
         <option value="Popular">Popular</option>
         <option value="Top">Top</option>
     </select>
-        <a> {{ session.name }} </a>
+        <a> {{ current_user.username }} </a>
         {% endif %}
         {% for message in get_flashed_messages() %}
         <div class=flash>{{ message }}</div>
@@ -58,3 +60,28 @@
     </div>
 </div>
 
+<script type=text/javascript>
+
+document.querySelector('#find').onclick = function() {
+findinf = document.getElementById('findtext').value;
+ob = document.getElementById('content')
+
+for(var i=0; i<ob.children.length; i++){
+    chtml=ob.children[i].textContent.toLowerCase();
+    if(chtml.indexOf(findinf.toLowerCase()) == -1)
+    {
+        ob.children[i].style.display='none';
+    }
+}
+};
+
+document.querySelector('#cancelsearch').onclick = function() {
+ob = document.getElementById('content')
+
+for(var i=0; i<ob.children.length; i++){
+    ob.children[i].style.display='block';
+}
+};
+
+
+</script>

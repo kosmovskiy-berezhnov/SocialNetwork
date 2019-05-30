@@ -6,7 +6,7 @@ mod = Blueprint('notifications', __name__)
 from app import db
 from models.user import User
 from models.notification import Notification
-
+from flask_login import current_user, login_required, login_user
 
 @mod.route('/mypage', methods=['GET'])
 def mypage():

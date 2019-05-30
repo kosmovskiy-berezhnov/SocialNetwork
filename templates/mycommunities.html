@@ -3,38 +3,34 @@
 <p>This is your communities:</p>
 <input align="right" type="button" value="Create new community" id="show">
 <br>
-<ul class=entries>
+<div id="content">
     {% if communities != None %}
     {% for c in communities %}
-	<li>
-		<div class=mtext><a href="{{ url_for('community.concrete_community', community_name=c.title) }}">{{ c.title
-			}}</a>
-			<form action="{{ url_for('community.unsubscribecommunity') }}" method="post">
-				<input type="hidden" name="id" value="{{ c.id }}"/>
-				<button class=ghost-button type="submit">Unsubscribe</button>
-			</form>
-		</div>
-    </li>
+    <div class=mtext><a href="{{ url_for('community.concrete_community', community_name=c.title) }}">{{ c.title
+        }}</a>
+        <form class='harmless-form' action="{{ url_for('community.unsubscribecommunity') }}" method="post">
+            <input type="hidden" name="id" value="{{ c.id }}"/>
+            <button class=ghost-button type="submit">Unsubscribe</button>
+        </form>
+    </div>
     {% endfor %}
     {% endif %}
-</ul>
-
+</div>
 <dialog background-color=rgba(0, 0, 0, 0.8)>
     <p>Create community</p>
-    <form action="{{ url_for('community.createcommunity') }}" method=post>
-        <dl>
-            <dt>Title:
-            <dd><input type=text name=title required>
-            <dt>Type:
-	            <select name="comtype">
-		            <option value="private">private</option>
-		            <option value="personal">personal</option>
-		            <option selected value="public">public</option>
-	            </select>
-            <dd><input type=submit value=Create>
-        </dl>
+    <form class="harmless-form" action="{{ url_for('community.createcommunity') }}" method=post>
+        <p>Title:</p>
+        <input type=text name=title required>
+        <p>Type:</p>
+        <select name="comtype">
+            <option value="private">private</option>
+            <option value="personal">personal</option>
+            <option selected value="public">public</option>
+        </select>
+        <br>
+        <input type=submit value=Create>
     </form>
-	<button id="close">Cancel</button>
+    <button id="close">Cancel</button>
 </dialog>
 <script type=text/javascript>
 var dialog = document.querySelector('dialog');
@@ -44,6 +40,9 @@ document.querySelector('#show').onclick = function() {
 document.querySelector('#close').onclick = function() {
   dialog.close();
 };
+
+
+
 
 
 </script>

@@ -8,7 +8,8 @@ h3              { float: right;}
 {
     color: #377ba8;
     font-family: 'Georgia', serif;
-    margin: 0;
+    margin-bottom: 20px;
+    margin-top: 10px;
     font-size: 1.2em;
 }
 .entries        { list-style: none; margin: 0; padding: 0; }
@@ -79,7 +80,11 @@ h3              { float: right;}
     padding: 5px 5px 5px 0px;
     list-style-type: none;
 }
-
+.harmless-form
+{
+     margin: 0;
+     display: inline;
+}
 .like-button {
   border-radius: 0;
   border: 0;
