@@ -15,8 +15,7 @@ def register():
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.login.data.lower()).first()
         if user is None:
-            user = User(username=form.login.data.lower(),
-                        password=generate_password_hash(form.password.data))
+            user = User(username=form.login.data.lower(), password=generate_password_hash(form.password.data))
             db.session.add(user)
             db.session.commit()
             flash('Registered successfully')

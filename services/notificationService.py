@@ -10,7 +10,7 @@ from models.notification import Notification
 
 @mod.route('/mypage', methods=['GET'])
 def mypage():
-    data = User.query.filter_by(username=session['name']).all()[0].get_notifications()
+    data = User.query.filter_by(username=g.user.username).first().get_notifications()
     notif = None
     if data != None:
         notif = json.loads(data)
@@ -22,14 +22,14 @@ def deleteNotification():
     username = request.form['username']
     creation_date = request.form['creation_date']
     text = request.form['text']
-    data = User.query.filter_by(username=session['name']).all()
+    data = User.query.filter_by(username=g.user.username).all()
     notif = json.loads(data[0].get_notifications())
     for i in range(0, len(notif)):
         if username == notif[i]['username'] and creation_date == notif[i]['creation_date'] and text == notif[i]['text']:
             notif.remove(notif[i])
             break
     jsonStr = json.dumps(notif)
-    User.query.filter_by(username=session['name']).update({"notifications": jsonStr})
+    User.query.filter_by(username=g.user.username).update({"notifications": jsonStr})
     db.session.commit()
     return redirect('/mypage')
 
@@ -39,7 +39,7 @@ def createNotification():
     name = request.form['username']
     notification = request.form['notification']
     data = User.query.filter_by(username=name).all()[0].get_notifications()
-    n = Notification(session['name'], notification, datetime.now())
+    n = Notification(g.user.username, notification, datetime.now())
     if data == None:
         data = "[" + json.dumps(n.toJSON()) + "]"
     else:

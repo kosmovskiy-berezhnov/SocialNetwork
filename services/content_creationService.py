@@ -2,7 +2,7 @@ import os
 from datetime import datetime
 from flask import Blueprint, request, render_template, flash, g, session, redirect, url_for, json
 from sqlalchemy import update
-
+from app import current_user
 from app import db
 from models.post import Post
 from models.user import User
@@ -15,10 +15,10 @@ def createposts():
     if request.method == 'POST':
         html_page = request.form['html_page']
         title = request.form['title']
-        newpost = Post(title=title, html_page=html_page, author=session['name'])
+        newpost = Post(title=title, html_page=html_page, author=g.user.username)
         db.session.add(newpost)
         db.session.commit()
-        pid = Post.query.filter_by(author=session['name']).order_by(Post.creation_date.desc()).first().id
+        pid = Post.query.filter_by(author=g.user.username).order_by(Post.creation_date.desc()).first().id
         session['created_post'] = pid
     post = Post.query.filter_by(id=session['created_post']).first()
     return render_template('createpost.html', created_post = post)
@@ -50,5 +50,5 @@ def addimage():
 @mod.route('/myposts', methods=['GET'])
 def myposts():
     session.pop('created_post', None)
-    data = Post.query.filter_by(author=session['name']).order_by(Post.creation_date.desc()).all()
+    data = Post.query.filter_by(author=g.user.username).order_by(Post.creation_date.desc()).all()
     return render_template('myposts.html', posts=data)

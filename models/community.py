@@ -17,7 +17,7 @@ class Community(db.Model):
                                db.Column('com_id', db.Integer, db.ForeignKey(id), primary_key=True),
                                db.Column('user_id', db.Integer, db.ForeignKey(User.id), primary_key=True)
                                )
-    subscribe_user = db.relationship(User, secondary=subscribe_table, cascade='all,delete',
+    subscribe_user = db.relationship(User, secondary=subscribe_table, cascade='all,delete', lazy='dynamic',
                                      backref=db.backref("user_subscribe", cascade='all,delete'),
                                      primaryjoin=subscribe_table.c.com_id == id,
                                      secondaryjoin=subscribe_table.c.user_id == User.id
