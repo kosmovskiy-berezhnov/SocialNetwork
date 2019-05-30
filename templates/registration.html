@@ -2,13 +2,22 @@
 {% block body %}
 
 <h2>Registration</h2>
-<form action="{{ url_for('registration.reg') }}" method=post>
-    <dl>
-        <dt>Username:
-        <dd><input type=text name=username required>
-        <dt>Password:
-        <dd><input type=password name=password required>
-        <dd><input type=submit value="sign in">
-    </dl>
+<form action="" method="post" name="login">
+    {{form.hidden_tag()}}
+    <p class="form-element">
+        Please enter your Login:<br>
+        {{form.login(size=40)}}<br>
+        {% for error in form.errors.login %}
+        <span class="error">[{{error}}]</span>
+        {% endfor %}<br>
+    </p>
+    <p class="form-element">
+        Enter your password:<br>
+        {{form.password(size=40)}}<br>
+        {% for error in form.errors.password %}
+        <span class="error">[{{error}}]</span>
+        {% endfor %}<br>
+    </p>
+    <p><input type="submit" class="form-element button" value="Sign up"></p>
 </form>
 {% endblock %}

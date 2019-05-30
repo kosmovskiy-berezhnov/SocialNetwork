@@ -10,10 +10,9 @@
             <li><a href="{{ url_for('create_post.myposts') }}"> My&nbsp;posts</a></li>
         </ol>
     </div>
-
     <div class=page>
         Search<input type="text" name="search" value="">
-        {% if not session.logged_in %}
+        {% if not user_auth %}
         <a href="{{ url_for('authorization.login') }}">log in</a>
         <br>
         Sort<select name="sort">
@@ -21,7 +20,7 @@
         <option value="Popular">Popular</option>
         <option value="Top">Top</option>
     </select>
-        <a href="{{ url_for('registration.reg') }}">sign in</a>
+        <a href="{{ url_for('registration.register') }}">sign in</a>
         {% else %}
         <a href="{{ url_for('authorization.logout') }}">log out</a>
         <br>
