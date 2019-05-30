@@ -29,7 +29,7 @@ def before_request():
 
 @app.route('/')
 def home():
-    return render_template('home.html', user_auth=g.user.is_authenticated)
+    return render_template('home.html', user_auth=g.id)
 
 
 from services import notificationService
