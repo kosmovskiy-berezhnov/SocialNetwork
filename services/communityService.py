@@ -7,6 +7,7 @@ from app import db
 from models.user import User
 from models.community import Community
 from models.post import Post
+from models.comment import Comment
 from models.moderator import Moderator
 
 
@@ -65,11 +66,13 @@ def community():
     st = request.args.get('val', '')
     if st != '':
         session['com_id'] = st
-    community = Community.query.filter_by(id=session['com_id']).join(Community.community_posts, isouter=True).first()
+    query= Community.query.filter_by(id=session['com_id']).join(Community.community_posts, isouter=True).join(
+        Comment, Comment.comid == session['com_id'] and Comment.postid == Post.id, isouter=True)
+    community = query.first()
     return render_template('community.html', posts=community.community_posts, com=community)
 
 
-@mod.route('/addpost', methods=['GET','POST'])
+@mod.route('/addpost', methods=['GET', 'POST'])
 def addpost():
     if request.method == 'POST':
         id = request.form['id']

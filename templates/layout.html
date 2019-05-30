@@ -1,30 +1,61 @@
 <!doctype html>
 <title>Social Network</title>
 <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
-<div>
-<div class=menu>
-<ol>
-   <li> <a href="{{ url_for('notifications.mypage') }}"> My&nbsp;page</a> </li>
-   <li> <a href="{{ url_for('community.mycommunities') }}"> Communities</a> </li>
-   <li> <a href="{{ url_for('create_post.myposts') }}"> My&nbsp;posts</a> </li>
-</ol>
-</div>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<div class="container">
+    <div class=menu>
+        <ol>
+            <li><a href="{{ url_for('notifications.mypage') }}"> My&nbsp;page</a></li>
+            <li><a href="{{ url_for('community.mycommunities') }}"> Communities</a></li>
+            <li><a href="{{ url_for('create_post.myposts') }}"> My&nbsp;posts</a></li>
+        </ol>
+    </div>
 
-<div class=page>
-    <h1>{% print(session.blog) %}</h1>
-    <div class=metanav>
+    <div class=page>
+        Search<input type="text" name="search" value="">
         {% if not session.logged_in %}
         <a href="{{ url_for('authorization.login') }}">log in</a>
         <br>
-        <a href="{{ url_for('registration.reg') }}">reg</a>
+        Sort<select name="sort">
+        <option selected value="New">New</option>
+        <option value="Popular">Popular</option>
+        <option value="Top">Top</option>
+    </select>
+        <a href="{{ url_for('registration.reg') }}">sign in</a>
         {% else %}
         <a href="{{ url_for('authorization.logout') }}">log out</a>
-        <h3> {% print(session.name) %} </h3>
+        <br>
+        Sort<select name="sort">
+        <option selected value="New">New</option>
+        <option value="Popular">Popular</option>
+        <option value="Top">Top</option>
+    </select>
+        <a> {{ session.name }} </a>
         {% endif %}
+        {% for message in get_flashed_messages() %}
+        <div class=flash>{{ message }}</div>
+        {% endfor %}
     </div>
-    {% for message in get_flashed_messages() %}
-    <div class=flash>{{ message }}</div>
-    {% endfor %}
-    {% block body %}{% endblock %}
+    <div class=interface>
+        <div class="adminandmod">
+            Moderator interface:
+            <ol>
+                <li><a href="{{ url_for('notifications.mypage') }}"> Ban&nbsp;user</a></li>
+                <li><a href="{{ url_for('notifications.mypage') }}"> Delete&nbsp;user</a></li>
+                <li><a href="{{ url_for('community.mycommunities') }}"> Delete&nbsp;community</a></li>
+                <li><a href="{{ url_for('create_post.myposts') }}"> Appoint&nbsp;moderator</a></li>
+            </ol>
+        </div>
+        <div class="adminandmod">
+            Administrator interface:
+            <ol>
+                <li><a href="{{ url_for('notifications.mypage') }}"> Appoint&nbsp;administrator</a></li>
+                <li><a href="{{ url_for('community.mycommunities') }}"> Send&nbsp;newsLetter</a></li>
+            </ol>
+        </div>
+    </div>
+    <div class="content">
+        {% block body %}{% endblock %}
+    </div>
 </div>
-</div>
+

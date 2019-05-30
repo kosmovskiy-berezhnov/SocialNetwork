@@ -1,8 +1,9 @@
-from app import db
-from sqlalchemy.dialects.postgresql import JSON
 from datetime import datetime
-from models.user import User
+from sqlalchemy.dialects.postgresql import JSON
 
+from app import db
+from models.comment import Comment
+from models.user import User
 
 
 class Post(db.Model):
@@ -13,13 +14,10 @@ class Post(db.Model):
     html_page = db.Column(db.Text)
     author = db.Column(db.ForeignKey(User.username), nullable=False)
     authorrel = db.relationship(User, lazy="joined", backref="authorrel", cascade='all,delete')
-    comments = None
+    post_comments = db.relationship(Comment, cascade='all,delete',
+                                    backref=db.backref("comment_post", cascade='all,delete'))
+    evaluatedusers = db.Column(db.Text, nullable=False, default='')
 
-    #def __init__(self,title,html_page,author):
-        #self.title=title
-        #self.html_page=html_page
-       # self.creation_date=datetime.now()
-       # self.author = author
     def set_html_page(self, nhtml_page):
         self.html_page = nhtml_page
 

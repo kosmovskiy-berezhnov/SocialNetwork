@@ -20,14 +20,16 @@ from services import content_creationService
 from services import registrationService
 from services import authorizationService
 from services import communityService
+from services import userService
 
 app.register_blueprint(notificationService.mod)
 app.register_blueprint(content_creationService.mod)
 app.register_blueprint(registrationService.mod)
 app.register_blueprint(authorizationService.mod)
 app.register_blueprint(communityService.mod)
-#db.drop_all()
-#db.create_all()
+app.register_blueprint(userService.mod)
+# db.drop_all()
+# db.create_all()
 
 if __name__ == '__main__':
     app.debug = True

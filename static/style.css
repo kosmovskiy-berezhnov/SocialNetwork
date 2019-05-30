@@ -3,6 +3,7 @@ a, h1, h2       { color: #377ba8; }
 h1, h2          { font-family: 'Georgia', serif; margin: 0; }
 h1              { border-bottom: 2px solid #eee; }
 h2              { font-size: 1.2em; }
+h3              { float: right;}
 .mtext
 {
     color: #377ba8;
@@ -15,8 +16,7 @@ h2              { font-size: 1.2em; }
 .entries li h2  { margin-left: -1em; }
 .add-entry      { font-size: 0.9em; border-bottom: 1px solid #ccc; }
 .add-entry dl   { font-weight: bold; }
-.metanav        { text-align: right; font-size: 0.8em; padding: 0.3em;
-                  margin-bottom: 1em; background: #fafafa; }
+
 .flash          { background: #cee5F5; padding: 0.5em;
                   border: 1px solid #aacbe2; }
 .error          { background: #f0d6d6; padding: 0.5em; }
@@ -28,28 +28,66 @@ h2              { font-size: 1.2em; }
     padding: 0.8em;
     background: white;
 }
+.page a
+{
+    float: right;
+}
 .menu
 {
-   margin: 5px 15px 15px 10px;
+   float: left;
+   width: 12%;
    height: 470px;
-   width: 150px;
    border: 1px solid #ccc;
    padding: 0.8em;
    background: white;
-   position: absolute;
 }
 
 .menu li
 {
     margin-top: 30px;
     padding: 5px 5px 5px 5px;
-    list-style-type: none; /* Убираем маркеры */
+    list-style-type: none;
 }
 .menu ul
 {
 
 }
+.interface
+{
+   float: right;
+   width: 13%;
+   background: #eee;
+}
+.adminandmod
+{
+   height: 220px;
+   border: 1px solid #ccc;
+   padding: 0.2em;
+   background: white;
+   margin-bottom: 10px;
+}
+.adminandmod ol
+{
+    padding-left: 10px;
+}
+.adminandmod li
+{
+    margin-top: 20px;
+    margin-right: 10px;
+    margin-left: 0px;
+    padding: 5px 5px 5px 0px;
+    list-style-type: none;
+}
 
+.like-button {
+  border-radius: 0;
+  border: 0;
+  background: transparent;
+  margin-right: 10px;
+}
+button.like-button:hover    {
+   background: #377BA8;
+}
 
 .ghost-button {
   border-radius: 0;
@@ -57,6 +95,9 @@ h2              { font-size: 1.2em; }
   background: transparent;
   float: right;
   margin-right: 10px;
+}
+button.ghost-button:hover    {
+   background: #377BA8;
 }
 
 .post > header {
@@ -81,4 +122,17 @@ h2              { font-size: 1.2em; }
 
 .post .body {
   white-space: pre-line;
+}
+
+.content {
+
+   float: center;
+   padding: 0.3em;
+   margin-bottom: 1em;
+   margin-left: 15%;
+   background: white;
+   width: 70%;
+}
+.container {
+   font-size: 1em;
 }

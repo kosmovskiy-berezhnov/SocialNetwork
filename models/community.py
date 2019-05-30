@@ -22,10 +22,6 @@ class Community(db.Model):
                                      primaryjoin=subscribe_table.c.com_id == id,
                                      secondaryjoin=subscribe_table.c.user_id == User.id
                                      )
-    # moderators_table = db.Table('moderators', db.metadata,
-    #                             db.Column('com_id', db.Integer, db.ForeignKey(id), primary_key=True),
-    #                             db.Column('mod_id', db.Integer, db.ForeignKey(User.id), primary_key=True)
-    #                             )
     moderators_users = db.relationship(User, secondary='moderator', cascade='all,delete',
                                        primaryjoin=Moderator.com_id == id,
                                        secondaryjoin=Moderator.mod_id == User.id,

@@ -7,7 +7,6 @@
     <input type="hidden" name="id" value="{{ com.id }}"/>
     <button class=ghost-button type="submit">Unsubscribe</button>
 </form>
-
 {% for post in posts %}
 <article class="post">
     <header>
@@ -21,5 +20,20 @@
     </div>
     <hr>
 </article>
+<form action="{{ url_for('userService.likepost') }}" method="post">
+    <input type="hidden" name="postid" value="{{ post.id }}"/>
+    <button class="like-button" type="submit"><i class="fa fa-heart-o" aria-hidden="true"></i></button>
+</form>
+
+<hr>
+<p>Comments</p>
+{% for comment in post.post_comments %}
+<p>{{comment.text}}</p>
+{% endfor %}
+<form action="{{ url_for('userService.addcomment') }}" method="post">
+    <input type="hidden" name="postid" value="{{ post.id }}"/>
+    <input type="text" name = "text">
+    <button type="submit">Comment</button>
+</form>
 {% endfor %}
 {% endblock %}
