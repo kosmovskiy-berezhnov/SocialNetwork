@@ -77,6 +77,7 @@ def subscribecommunity():
     return redirect('/community')
 
 
+
 @mod.route('/com/<community_name>')
 def concrete_community(community_name):
     community = Community.query.filter_by(title=community_name).join(Community.community_posts, isouter=True).first()
@@ -96,7 +97,7 @@ def community():
     return render_template('community.html', posts=community.community_posts, com=community)
 
 
-@mod.route('/addpost', methods=['GET', 'POST'])
+@mod.route('/addpost', methods=['GET','POST'])
 def addpost():
     if request.method == 'POST':
         id = request.form['id']

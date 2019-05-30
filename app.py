@@ -43,8 +43,8 @@ app.register_blueprint(content_creationService.mod)
 app.register_blueprint(registrationService.mod)
 app.register_blueprint(authorizationService.mod)
 app.register_blueprint(communityService.mod)
-db.drop_all()
-db.create_all()
+#db.drop_all()
+#db.create_all()
 
 if __name__ == '__main__':
     app.debug = True

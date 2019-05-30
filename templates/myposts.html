@@ -6,16 +6,16 @@
 
 <dialog background-color=rgba(0, 0, 0, 0.8)>
     <p>Enter title for your post. If you have html page, you should attach it below</p>
-    <form action="{{ url_for('create_post.createposts') }}" method=post>
+    <form action="{{ url_for('create_post.createposts') }}" method=post enctype="multipart/form-data">
         <dl>
             <dt>Title:
             <dd><input type=text name=title required>
-            <dt>Html page(not required):
-            <dd><input type=text name=html_page>
+            <dt>Load html page:
+            <dd><input type="file" name="html_page" enctype="multipart/form-data">
             <dd><input type=submit value=Create>
-                <button id="close">Cancel</button>
         </dl>
     </form>
+    <button id="close">Cancel</button>
 </dialog>
 
 <script type=text/javascript>
@@ -26,6 +26,7 @@ document.querySelector('#show').onclick = function() {
 document.querySelector('#close').onclick = function() {
   dialog.close();
 };
+
 
 </script>
 

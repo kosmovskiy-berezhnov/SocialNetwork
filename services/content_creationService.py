@@ -13,7 +13,10 @@ mod = Blueprint('create_post', __name__)
 @mod.route('/createposts', methods=['GET', 'POST'])
 def createposts():
     if request.method == 'POST':
-        html_page = request.form['html_page']
+        html_page = ''
+        if 'html_page' in dict(request.files):
+            file = request.files['html_page']
+            html_page = file.read().decode("utf-8")
         title = request.form['title']
         newpost = Post(title=title, html_page=html_page, author=g.user.username)
         db.session.add(newpost)
@@ -21,7 +24,7 @@ def createposts():
         pid = Post.query.filter_by(author=g.user.username).order_by(Post.creation_date.desc()).first().id
         session['created_post'] = pid
     post = Post.query.filter_by(id=session['created_post']).first()
-    return render_template('createpost.html', created_post = post)
+    return render_template('createpost.html', post=post)
 
 
 @mod.route('/addtext', methods=['POST'])
