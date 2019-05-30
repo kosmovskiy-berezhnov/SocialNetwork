@@ -12,7 +12,7 @@
     </div>
     <div class=page>
         Search<input type="text" name="search" value="">
-        {% if not user_auth %}
+        {% if user_auth == 0 %}
         <a href="{{ url_for('authorization.login') }}">log in</a>
         <br>
         Sort<select name="sort">

@@ -4,21 +4,23 @@
 <h1>{{ com.title }}</h1>
 <a href="{{ url_for('community.addpost') }}">Add post to this community</a>
 <form action="{{ url_for('community.unsubscribecommunity') }}" method="post">
-    <input type="hidden" name="id" value="{{ com.id }}"/>
-    <button class=ghost-button type="submit">Unsubscribe</button>
+	<input type="hidden" name="id" value="{{ com.id }}"/>
+	{% if is_subbed %}
+	<button class=ghost-button type="submit">Unsubscribe</button>
+	{% endif %}
 </form>
 {% for post in posts %}
 <article class="post">
-    <header>
-        <div>
-            <h1>{{ post.title }}</h1>
-            <div class="about">by {{ post.author}} on {{ post.creation_date.strftime('%Y-%m-%d') }}</div>
-        </div>
-    </header>
-    <div id="post{{ post.id}}" class="body">
-        {{ post.html_page| safe}}
-    </div>
-    <hr>
+	<header>
+		<div>
+			<h1>{{ post.title }}</h1>
+			<div class="about">by {{ post.author}} on {{ post.creation_date.strftime('%Y-%m-%d') }}</div>
+		</div>
+	</header>
+	<div id="post{{ post.id}}" class="body">
+		{{ post.html_page| safe}}
+	</div>
+	<hr>
 </article>
 <form action="{{ url_for('userService.likepost') }}" method="post">
     <input type="hidden" name="postid" value="{{ post.id }}"/>

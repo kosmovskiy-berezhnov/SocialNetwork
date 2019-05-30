@@ -22,4 +22,4 @@ class Post(db.Model):
         self.html_page = nhtml_page
 
     def get_html_page(self):
-        return html_page
+        return self.html_page
