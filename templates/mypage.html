@@ -9,7 +9,7 @@
     <div>
         <p><span class=mtext>{{ n['username'] }}</span> &nbsp&nbsp {{ n['creation_date'] }}</p>
         <form action="{{ url_for('notifications.deleteNotification') }}" method="post">
-            {{ n['text'] }}
+            {{ n['text'] | safe }}
             <input type="hidden" name="username" value="{{ n['username'] }}"/>
             <input type="hidden" name="creation_date" value="{{ n['creation_date'] }}"/>
             <input type="hidden" name="text" value="{{ n['text'] }}"/>
@@ -19,7 +19,7 @@
     {% endfor %}
     {% endif %}
 </div>
-<dialog background-color=rgba(0, 0, 0, 0.8)>
+<dialog id = 'dialog' background-color=rgba(0, 0, 0, 0.8)>
     <p>Enter notification for user</p>
     <form class="harmless-form" action="{{ url_for('notifications.createNotification') }}" method=post>
         <p>Username:</p>
@@ -32,7 +32,7 @@
     <button id="close">Cancel</button>
 </dialog>
 <script type=text/javascript>
-var dialog = document.querySelector('dialog');
+var dialog = document.querySelector('#dialog');
 document.querySelector('#show').onclick = function() {
   dialog.showModal();;
 };

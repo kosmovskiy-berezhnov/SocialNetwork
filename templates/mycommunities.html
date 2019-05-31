@@ -6,8 +6,7 @@
 <div id="content">
     {% if communities != None %}
     {% for c in communities %}
-    <div class=mtext><a href="{{ url_for('community.concrete_community', community_name=c.title) }}">{{ c.title
-        }}</a>
+    <div class=mtext><a href="{{ url_for('community.concrete_community', community_name=c.title) }}">{{ c.title }}</a>
         <form class='harmless-form' action="{{ url_for('community.unsubscribecommunity') }}" method="post">
             <input type="hidden" name="id" value="{{ c.id }}"/>
             <button class=ghost-button type="submit">Unsubscribe</button>
@@ -16,7 +15,7 @@
     {% endfor %}
     {% endif %}
 </div>
-<dialog background-color=rgba(0, 0, 0, 0.8)>
+<dialog id ='dialog' background-color=rgba(0, 0, 0, 0.8)>
     <p>Create community</p>
     <form class="harmless-form" action="{{ url_for('community.createcommunity') }}" method=post>
         <p>Title:</p>
@@ -33,7 +32,7 @@
     <button id="close">Cancel</button>
 </dialog>
 <script type=text/javascript>
-var dialog = document.querySelector('dialog');
+var dialog = document.querySelector('#dialog');
 document.querySelector('#show').onclick = function() {
   dialog.showModal();;
 };

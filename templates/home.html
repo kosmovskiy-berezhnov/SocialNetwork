@@ -1,4 +1,22 @@
 {% extends "layout.html" %}
 {% block body %}
-This is home page
+<div id="content">
+    {% for pair in communities %}
+    <div>
+        <h2 href="{{ url_for('community.concrete_community', community_name=pair[0].title) }}">{{ pair[0].title }}</h2>
+        <article class="post">
+            <header>
+                <div>
+                    <h1>{{ pair[1].title }}</h1>
+                    <div class="about">by {{ pair[1].author}} on {{ pair[1].creation_date.strftime('%Y-%m-%d') }}</div>
+                </div>
+            </header>
+            <div id="post{{ pair[1].id}}" class="body">
+                {{ pair[1].html_page| safe}}
+            </div>
+            <hr>
+        </article>
+    </div>
+    {% endfor %}
+</div>
 {% endblock %}

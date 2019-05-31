@@ -2,36 +2,8 @@
 {% block body %}
 
 <p>This is your posts:</p>
-<input align="right" type="button" value="Create new post" id="show">
-
-<dialog background-color=rgba(0, 0, 0, 0.8)>
-    <p>Enter title for your post.</p>
-    <p> If you have html page, you should attach it below.</p>
-    <form class="harmless-form" action="{{ url_for('create_post.createposts') }}" method=post
-          enctype="multipart/form-data">
-        <p>Title:</p>
-        <input type=text name=title required>
-        <p>Load html page:</p>
-        <input type="file" name="html_page" enctype="multipart/form-data">
-        <br>
-        <input type=submit value=Create>
-    </form>
-    <button id="close">Cancel</button>
-</dialog>
-
-<script type=text/javascript>
-var dialog = document.querySelector('dialog');
-document.querySelector('#show').onclick = function() {
-  dialog.showModal();;
-};
-document.querySelector('#close').onclick = function() {
-  dialog.close();
-};
 
 
-
-
-</script>
 <div id="content">
     {% for post in posts %}
     <article class="post">
