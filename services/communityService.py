@@ -1,5 +1,6 @@
 from datetime import datetime
 from flask import Blueprint, request, render_template, flash, g, session, redirect, url_for, json
+from flask_login import login_required
 from sqlalchemy import update
 
 mod = Blueprint('community', __name__)
@@ -11,38 +12,14 @@ from models.comment import Comment
 from models.moderator import Moderator
 
 
-@mod.route('/mycommunities', methods=['GET'])
-def mycommunities():
-    query = db.session.query(User).filter_by(username=g.user.username).join(User.user_subscribe)
-    data = query.first()
-    if data != None:
-        data = data.user_subscribe
-    else:
-        data = []
-    return render_template('mycommunities.html', communities=data)
-
-
-@mod.route('/unsubscribecommunity', methods=['POST'])
-def unsubscribecommunity():
-    id = request.form['id']
-    nuser = User.query.filter_by(id=g.user.id).one()
-    newcommunity = Community.query.filter_by(id=id).first()
-    newcommunity.subscribe_user.remove(nuser)
-    newcommunity.moderators_users.remove(nuser)
-    db.session.add(newcommunity)
-    db.session.commit()
-    return redirect('/mycommunities')
-
-
 def check_community(community_name):
     community = Community.query.filter_by(title=community_name).first()
     return community
 
 
 def is_subscribed(user_id, community_id):
-    com = Community.query.get(community_id)
-    user = com.subscribe_user.filter_by(id=user_id).first()
-    return user is not None
+    com = Community.query.filter_by(id=community_id).join(Community.subscribe_user).filter_by(id=user_id).first()
+    return com is not None
 
 
 def is_moderator(user_id, community_id):
@@ -50,7 +27,36 @@ def is_moderator(user_id, community_id):
     return moderator is not None
 
 
+@mod.route('/mycommunities', methods=['GET'])
+@login_required
+def mycommunities():
+    data = None
+    if session['admin'] == False:
+        query = db.session.query(User).filter_by(username=g.user.username).join(User.user_subscribe).limit(100)
+        data = query.first()
+        if data != None:
+            data = data.user_subscribe
+        else:
+            data = []
+    else:
+        data = Community.query.all()
+    return render_template('mycommunities.html', communities=data)
+
+
+@mod.route('/unsubscribecommunity', methods=['GET'])
+@login_required
+def unsubscribecommunity():
+    user = User.query.filter_by(id=g.user.id).one()
+    community = Community.query.filter_by(id=session['com_id']).first()
+    community.subscribe_user.remove(user)
+    community.moderators_users.remove(user)
+    db.session.add(community)
+    db.session.commit()
+    return redirect('/mycommunities')
+
+
 @mod.route('/createcommunity', methods=['POST'])
+@login_required
 def createcommunity():
     title = request.form['title']
     comtype = request.form['comtype']
@@ -67,46 +73,46 @@ def createcommunity():
         db.session.add(newcommunity)
         session['com_id'] = newcommunity.id
         db.session.commit()
-        return render_template('community.html', posts=newcommunity.community_posts, com=newcommunity,
-                               is_subbed=True)
+        return redirect(url_for('community.concrete_community', community_name=newcommunity.title))
     return redirect('/mycommunities')
 
 
 @mod.route('/subscribecommunity', methods=['GET'])
+@login_required
 def subscribecommunity():
-    nuser = User.query.filter_by(id=session['user_id']).one()
+    user = User.query.filter_by(id=session['user_id']).one()
     community = Community.query.filter_by(id=session['com_id']).first()
-    community.subscribe_user.append(nuser)
+    community.subscribe_user.append(user)
     db.session.add(community)
     db.session.commit()
-    return redirect('/community')
+    return redirect(url_for('community.concrete_community', community_name=community.title))
 
 
 @mod.route('/com/<community_name>')
 def concrete_community(community_name):
-    community = Community.query.filter_by(title=community_name).join(Community.community_posts, isouter=True).first()
-    if community is not None:
-        session['com_id'] = community.id
-        return render_template('community.html', posts=community.community_posts, com=community,
-                               is_subbed=is_subscribed(g.user.id, community.id), iscom=True,
-                               moder=is_moderator(g.user.id, community.id))
-    flash('community with such name does not exists')
-    redirect('/community')
-
-
-@mod.route('/community', methods=['GET'])
-def community():
-    st = request.args.get('val', '')
-    if st != '':
-        session['com_id'] = st
-    query = Community.query.filter_by(id=session['com_id']).join(Community.community_posts, isouter=True).join(
-        Comment, Comment.comid == session['com_id'] and Comment.postid == Post.id, isouter=True)
+    query = Community.query.filter_by(title=community_name).join(Community.community_posts, isouter=True)
     community = query.first()
-    return render_template('community.html', posts=community.community_posts, com=community, iscom=True,
-                           moder=is_moderator(g.user.id, community.id))
+    if community is not None:
+        if community.type == 'private' and g.user not in community.subscribe_user:
+            flash('It is private community')
+        else:
+            session['com_id'] = community.id
+            query = query.join(Comment, Comment.postid == Post.id, isouter=True)
+            community = query.first()
+            is_subbed = False
+            moder = False
+            if not g.user.is_anonymous:
+                is_subbed = is_subscribed(g.user.id, community.id)
+                moder = is_moderator(g.user.id, community.id)
+            return render_template('community.html', posts=community.community_posts, com=community,
+                                   is_subbed=is_subbed, iscom=True, moder=moder)
+    else:
+        flash('community with such name does not exists')
+    return redirect(url_for('community.allcommunities'))
 
 
 @mod.route('/addpost', methods=['GET'])
+@login_required
 def addpost():
     community = Community.query.filter_by(id=session['com_id']).first()
     post = Post.query.filter_by(id=session['created_post']).first()
@@ -114,13 +120,28 @@ def addpost():
     db.session.add(community)
     db.session.commit()
     session.pop('created_post', None)
-    return redirect('/community')
+    return redirect(url_for('community.concrete_community', community_name=community.title))
+
+
+@mod.route('/deletepost', methods=['POST'])
+@login_required
+def deletepost():
+    postid = request.form['postid']
+    post = Post.query.filter_by(id=postid).first()
+    community = Community.query.filter_by(id=session['com_id']).first()
+    if session['admin'] == True or post.author == g.user.username or g.user in community.moderators_users:
+        Post.query.filter_by(id=postid).delete()
+        db.session.commit()
+        flash("Post deleted")
+    else:
+        flash('Permission denied!')
+    return redirect(url_for('community.concrete_community', community_name=community.title))
 
 
 @mod.route('/', methods=['GET'])
 def allcommunities():
     query = Community.query.filter(type != 'private').join(Community.community_posts, isouter=True).order_by(
-        Post.id.desc()).limit(100)
+        Post.id.desc())
     data = query.all()
     ans = []
     for com in data:
@@ -128,3 +149,12 @@ def allcommunities():
             post = sorted(com.community_posts, key=lambda x: x.creation_date, reverse=True)[0]
             ans.append((com, post))
     return render_template("home.html", communities=ans)
+
+
+@mod.route('/allpeople', methods=['GET'])
+def allpeople():
+    query = db.session.query(User.username).filter(
+        User.id == Moderator.mod_id and Moderator.com_id == session['com_id'])
+    moderators = query.all().limit(100)
+    users = User.query.join(User.user_subscribe).filter_by(id=session['com_id']).all()
+    return render_template("allpeople.html", moderators=moderators, users=users)

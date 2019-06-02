@@ -1,0 +1,18 @@
+{% extends "layout.html" %}
+{% block body %}
+<p>People in Social network:</p>
+<div id="content">
+    <p>Moderators:</p>
+    {% for mod in moderators %}
+    <div>
+        <h2>{{ mod.username }}</h2>
+    </div>
+    {% endfor %}
+    <p>All users:</p>
+    {% for user in users %}
+    <div>
+        <p><span class=mtext>{{ user.username }}</span> &nbsp&nbsp {{ user.rating }}</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

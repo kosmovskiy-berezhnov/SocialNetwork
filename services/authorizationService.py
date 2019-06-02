@@ -3,7 +3,7 @@ from flask import Blueprint, Flask, request, session, g, redirect, url_for, rend
 from flask_login import login_user, logout_user, current_user
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import check_password_hash
-
+from flask_login import login_required
 from app import db
 from forms import LoginForm
 from models.user import User
@@ -22,11 +22,12 @@ def login():
             flash("No user with such nickname")
         elif check_password_hash(user.password, form.password.data):
             login_user(user)
+            session['admin'] = False
             admin = Administrator.query.filter_by(username=user.username).first()
             if admin != None:
                 flash("Hello admin")
                 session['admin'] = True
-            return redirect(request.args.get('next') or url_for('community.allcommunities'))
+            return redirect( url_for('community.allcommunities'))
         else:
             flash('Wrong password')
     return render_template('login.html', form=form)

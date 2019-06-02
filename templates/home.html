@@ -1,9 +1,10 @@
 {% extends "layout.html" %}
 {% block body %}
+<p><a class = 'ghost-button' href ="{{ url_for('admin.administrators') }}">Administrators</a></p>
 <div id="content">
     {% for pair in communities %}
     <div>
-        <h2 href="{{ url_for('community.concrete_community', community_name=pair[0].title) }}">{{ pair[0].title }}</h2>
+        <h2><a href="{{ url_for('community.concrete_community', community_name=pair[0].title) }}">{{ pair[0].title }}</a></h2>
         <article class="post">
             <header>
                 <div>

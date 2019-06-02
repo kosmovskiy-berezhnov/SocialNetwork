@@ -19,7 +19,7 @@
     <p>Create community</p>
     <form class="harmless-form" action="{{ url_for('community.createcommunity') }}" method=post>
         <p>Title:</p>
-        <input type=text name=title required>
+        <input type=text name=title maxlength=30 required>
         <p>Type:</p>
         <select name="comtype">
             <option value="private">private</option>

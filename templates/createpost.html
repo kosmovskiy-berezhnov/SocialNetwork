@@ -17,13 +17,13 @@ Your template for post:
 
 <form action="{{ url_for('create_post.addtext') }}" method="post">
     <p>Add text</p>
-    <textarea name=text rows=5 cols=40></textarea>
+    <textarea name=text rows=5 cols=40 maxlength=30000></textarea>
     <button type="submit">Load text</button>
 </form>
 
 <form action="{{ url_for('create_post.addimage') }}" method="post" enctype="multipart/form-data">
     <p>Load picture</p>
-    <p><input type="file" name="pic" enctype="multipart/form-data"></p>
+    <input type="file" name="pic" enctype="multipart/form-data">
     <input type=submit value="Load image">
 </form>
 <a href ="{{ url_for('community.addpost') }}">End to create</a>

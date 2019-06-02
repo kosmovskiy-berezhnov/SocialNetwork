@@ -1,4 +1,5 @@
 from flask import Flask, Blueprint, request, session, g, redirect, url_for, render_template, flash, json
+from flask_login import login_required
 
 from app import db
 from models.administrator import Administrator
@@ -8,16 +9,24 @@ mod = Blueprint('admin', __name__)
 
 
 @mod.route('/appointadmin', methods=['POST'])
+@login_required
 def appointadmin():
-    flash('admin assigned!')
     username = request.form['username']
-    admin = Administrator(username=username)
-    db.session.add(admin)
-    db.session.commit()
+    if User.query.filter_by(username=username).first() is None:
+        flash('Cannot this user!')
+    else:
+        if Administrator.query.filter_by(username=username).first() is None:
+            flash('admin assigned!')
+            admin = Administrator(username=username)
+            db.session.add(admin)
+            db.session.commit()
+        else:
+            flash('admin had already assigned!')
     return redirect(url_for('community.allcommunities'))
 
 
 @mod.route('/newsletter', methods=['POST'])
+@login_required
 def newsletter():
     from services.notificationService import addNotification
     notification = request.form['notification']
@@ -26,3 +35,9 @@ def newsletter():
     for user in users:
         addNotification(user.username, notification)
     return redirect(url_for('community.allcommunities'))
+
+
+@mod.route('/administrators', methods=['GET'])
+def administrators():
+    admin = Administrator.query.all()
+    return render_template("admin.html", admins=admin)

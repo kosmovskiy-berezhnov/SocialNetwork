@@ -22,17 +22,13 @@
         {% endif %}
         <br>
         {% if iscom == 1 %}
-        <script type=text/javascript>
-            alert({{iscom}});
-
-
-
-        </script>
-        Sort<select name="sort">
-        <option selected value="New">New</option>
-        <option value="Popular">Popular</option>
-        <option value="Top">Top</option>
-    </select>
+        <form class="harmless-form" action="{{ url_for('admin.appointadmin') }}" method=post>
+            <select name="sort" onchange=this.form.submit()>
+                <option selected value="New">New</option>
+                <option value="Popular">Popular</option>
+                <option value="Top">Top</option>
+            </select>
+        </form>
         {% endif %}
         {% if current_user.is_anonymous %}
         <a href="{{ url_for('registration.register') }}">sign in</a>
@@ -49,10 +45,27 @@
         <div class="adminandmod">
             Moderator interface:
             <ol>
-                <li><a href="{{ url_for('notifications.mypage') }}"> Ban&nbsp;user</a></li>
-                <li><a href="{{ url_for('notifications.mypage') }}"> Delete&nbsp;user</a></li>
-                <li><a href="{{ url_for('community.mycommunities') }}"> Delete&nbsp;community</a></li>
-                <li><a href="{{ url_for('create_post.myposts') }}"> Appoint&nbsp;moderator</a></li>
+                <li>
+                    <button class=ghost-button onclick="opendialog(this)" name="adduser">Add&nbsp;user</button>
+                <li>
+                <li>
+                    <button class=ghost-button onclick="opendialog(this)" name="banuser">Ban&nbsp;user</button>
+                <li>
+                <li>
+                    <button class=ghost-button onclick="opendialog(this)" name="unbanuser">Unban&nbsp;user</button>
+                <li>
+                <li>
+                    <button class=ghost-button onclick="opendialog(this)" name="deleteuser">Delete&nbsp;user</button>
+                <li>
+                <li>
+                    <button class=ghost-button onclick="opendialog(this)" name="deletecommunity">Delete&nbsp;community
+                    </button>
+                <li>
+                <li>
+                    <button class=ghost-button onclick="opendialog(this)" name="appointmoderator">
+                        Appoint&nbsp;moderator
+                    </button>
+                <li>
             </ol>
         </div>
         {% endif %}
@@ -70,7 +83,7 @@
         </div>
         {% endif %}
     </div>
-    <dialog id = 'dappoint' background-color=rgba(0, 0, 0, 0.8)>
+    <dialog id='dappoint' background-color=rgba(0, 0, 0, 0.8)>
         <p>Appoint administrator</p>
         <form class="harmless-form" action="{{ url_for('admin.appointadmin') }}" method=post>
             <p>Username:</p>
@@ -79,11 +92,11 @@
         </form>
         <button id="closeapp">Cancel</button>
     </dialog>
-    <dialog id = 'dnewsletter' background-color=rgba(0, 0, 0, 0.8)>
+    <dialog id='dnewsletter' background-color=rgba(0, 0, 0, 0.8)>
         <p>Send newsletter</p>
         <form class="harmless-form" action="{{ url_for('admin.newsletter') }}" method=post>
             <p>Notification:</p>
-            <input type=text name=notification required>
+            <input type=text name=notification maxlength=300 required>
             <input type=submit value=Send>
         </form>
         <button id="closenewsletter">Cancel</button>
@@ -130,5 +143,9 @@ document.querySelector('#newsletter').onclick = function() {
 document.querySelector('#closenewsletter').onclick = function() {
   dnewsletter.close();
 };
+
+
+
+
 
 </script>

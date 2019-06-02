@@ -1,7 +1,7 @@
 from datetime import datetime
 from flask import Blueprint, request, render_template, flash, g, session, redirect, url_for, json
 from sqlalchemy import update
-
+from flask_login import login_required
 mod = Blueprint('notifications', __name__)
 from app import db
 from models.user import User
@@ -21,6 +21,7 @@ def addNotification(name, notification):
 
 
 @mod.route('/mypage', methods=['GET'])
+@login_required
 def mypage():
     data = User.query.filter_by(username=g.user.username).first().get_notifications()
     notif = None
@@ -30,6 +31,7 @@ def mypage():
 
 
 @mod.route('/deleteNotification', methods=['POST'])
+@login_required
 def deleteNotification():
     username = request.form['username']
     creation_date = request.form['creation_date']
@@ -47,8 +49,13 @@ def deleteNotification():
 
 
 @mod.route('/createNotification', methods=['POST'])
+@login_required
 def createNotification():
     name = request.form['username']
-    notification = request.form['notification']
-    addNotification(name, notification)
+    user = User.query.filter_by(username=name).first()
+    if user is None:
+        flash("This user are not exist")
+    else:
+        notification = request.form['notification']
+        addNotification(name, notification)
     return redirect('/mypage')
