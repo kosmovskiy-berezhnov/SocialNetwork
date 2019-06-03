@@ -2,7 +2,7 @@ from cryptography.fernet import Fernet
 from flask import Flask, Blueprint, request, session, g, redirect, url_for, render_template, flash, json
 from flask_login import login_required
 import base64
-from app import db, cipher
+from config import db, cipher
 from models.administrator import Administrator
 from models.comment import Comment
 from models.community import Community

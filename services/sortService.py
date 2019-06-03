@@ -1,6 +1,6 @@
 from flask import Flask, Blueprint, request, session, g, redirect, url_for, render_template, flash, json
 
-from app import db
+from config import db
 from models.administrator import Administrator
 from models.comment import Comment
 from models.community import Community
