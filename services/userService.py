@@ -2,7 +2,7 @@ import os
 from flask import Blueprint, Flask, request, session, g, redirect, url_for, render_template, flash, json
 from flask_sqlalchemy import SQLAlchemy
 
-from app import db
+from config import db
 from models.comment import Comment
 from models.post import Post
 from models.user import User

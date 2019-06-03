@@ -1,11 +1,7 @@
 import os
-from datetime import datetime
 from flask import Blueprint, request, render_template, flash, g, session, redirect, url_for, json
-from sqlalchemy import update
-from app import current_user
 from config import db
 from models.post import Post
-from models.user import User
 
 mod = Blueprint('create_post', __name__)
 

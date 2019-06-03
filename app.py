@@ -23,6 +23,8 @@ def get_user(ident):
 def before_request():
     g.user = current_user
     g.id = 0 if not g.user.is_authenticated else g.user.id
+
+
 url_address = '127.0.0.1'
 api = SAFRSAPI(app, host=url_address, port=5000, prefix='/api/docs')
 app.app_context().push()
