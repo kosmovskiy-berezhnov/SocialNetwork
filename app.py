@@ -1,22 +1,24 @@
-import os
-from flask import Flask, request, session, g, redirect, url_for, render_template, flash, json
-# from flask_sqlalchemy import SQLAlchemy
-from safrs import SAFRS, SAFRSAPI, SAFRSBase
-from models.swagger_init import expose
-from config import app
-from flask_sqlalchemy import SQLAlchemy
-from flask_login import current_user, login_required, login_user, LoginManager
+from flask import g
+from flask_login import current_user, LoginManager
+from safrs import SAFRSAPI
 
+from config import app, db
+from models.swagger_init import expose
 
 lm = LoginManager()
 lm.init_app(app=app)
-lm.login_view = 'login'
+lm.login_view = 'authorization.login'
 
 
 @lm.user_loader
 def get_user(ident):
     from models.user import User
     return User.query.get(int(ident))
+
+
+@app.teardown_appcontext
+def shutdown_session(exception=None):
+    db.session.remove()
 
 
 @app.before_request
@@ -31,6 +33,12 @@ app.app_context().push()
 expose(api)
 
 
+@app.after_request
+def after_request(response):
+    db.session.close()
+    return response
+
+
 from services import notificationService
 from services import content_creationService
 from services import registrationService
@@ -38,6 +46,8 @@ from services import authorizationService
 from services import communityService
 from services import userService
 from services import adminService
+from services import moderatorService
+from services import sortService
 
 app.register_blueprint(notificationService.mod)
 app.register_blueprint(content_creationService.mod)
@@ -45,10 +55,12 @@ app.register_blueprint(registrationService.mod)
 app.register_blueprint(authorizationService.mod)
 app.register_blueprint(communityService.mod)
 app.register_blueprint(userService.mod)
+app.register_blueprint(moderatorService.mod)
 app.register_blueprint(adminService.mod)
-# db.drop_all()
-# db.create_all()
-
+app.register_blueprint(sortService.mod)
 if __name__ == '__main__':
-    app.debug = True
-    app.run(host='127.0.0.1', port=5000, debug=True)
+    try:
+        app.debug = True
+        app.run(host='127.0.0.1', port=5000, debug=True)
+    finally:
+        db.session.close()

@@ -1,7 +1,9 @@
 {% extends "layout.html" %}
 {% block body %}
+<p><span class=mtext> Hello {{ current_user.username }}</span>   Your rating - {{ current_user.rating }}</p>
+<button class="ghost-button" id="del">Delete profile</button>
 <p>This is your notifications:</p>
-<input align="right" type="button" value="Send Notification" id="show">
+<input class="btn btn-primary btn-xs" align="right" type="button" value="Send Notification" id="show">
 <br>
 <div id="content">
     {% if notifications != None %}
@@ -19,17 +21,24 @@
     {% endfor %}
     {% endif %}
 </div>
-<dialog id = 'dialog' background-color=rgba(0, 0, 0, 0.8)>
+<dialog id='dialog' background-color=rgba(0, 0, 0, 0.8)>
     <p>Enter notification for user</p>
     <form class="harmless-form" action="{{ url_for('notifications.createNotification') }}" method=post>
         <p>Username:</p>
         <input type=text name=username required>
         <p>Notification:</p>
-        <input type=text name=notification required>
-        <br>
-        <input type=submit value=Send>
+        <input type=text name=notification maxlength=300 required>
+        <p></p>
+        <input class="btn btn-primary" type=submit value=Send>
     </form>
-    <button id="close">Cancel</button>
+    <button class="btn btn-secondary" id="close">Cancel</button>
+</dialog>
+<dialog id='delete' background-color=rgba(0, 0, 0, 0.8)>
+    <p>Are you sure want to delete profile?</p>
+    <form class="harmless-form" action="{{ url_for ('userService.deleteprofile') }}" method=get>
+        <input class="btn btn-primary" type=submit value=Yes>
+    </form>
+    <button class="btn btn-secondary" id=delclose>No</button>
 </dialog>
 <script type=text/javascript>
 var dialog = document.querySelector('#dialog');
@@ -39,12 +48,13 @@ document.querySelector('#show').onclick = function() {
 document.querySelector('#close').onclick = function() {
   dialog.close();
 };
-
-
-
-
-
-
+var dialogd = document.querySelector('#delete');
+document.querySelector('#del').onclick = function() {
+  dialogd.showModal();;
+};
+document.querySelector('#delclose').onclick = function() {
+  dialogd.close();
+};
 
 
 </script>

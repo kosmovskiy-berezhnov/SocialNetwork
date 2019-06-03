@@ -9,5 +9,5 @@ class LoginForm(Form):
 
 
 class RegisterForm(Form):
-    login = StringField('login', validators=[DataRequired(), Length(min=3)])
-    password = PasswordField('password', validators=[DataRequired(), Length(min=3)])
+    login = StringField('login', validators=[DataRequired(), Length(min=3, max=30)])
+    password = PasswordField('password', validators=[DataRequired(), Length(min=3,max=30)])

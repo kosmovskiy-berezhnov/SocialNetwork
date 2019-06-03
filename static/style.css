@@ -21,16 +21,40 @@ h3              { float: right;}
 .flash          { background: #cee5F5; padding: 0.5em;
                   border: 1px solid #aacbe2; }
 .error          { background: #f0d6d6; padding: 0.5em; }
-.page
+.mypage
 {
     margin: 10px auto;
-    width: 69%;
+    width: 70%;
     border: 2px solid #ccc;
     padding: 0.8em;
     background: white;
     margin-left: 200px;
+    height: 110px;
 }
-.page a
+.btn-primary
+{
+    background: #377ba8;
+}
+.btn-secondary
+{
+    margin-left:50px;
+}
+.bigg
+{
+
+}
+a.bigg:hover
+{
+    background:#377ba8;
+    color: white;
+    padding: 10px;
+    text-decoration: none;
+}
+.notvis
+{
+   display: none;
+}
+.mypage a
 {
     float: right;
 }
@@ -47,12 +71,11 @@ h3              { float: right;}
 .menu li
 {
     margin-top: 30px;
-    padding: 5px 5px 5px 5px;
     list-style-type: none;
 }
-.menu ul
+.menu ol
 {
-
+    padding: 5px;
 }
 .interface
 {
@@ -62,7 +85,6 @@ h3              { float: right;}
 }
 .adminandmod
 {
-   height: 220px;
    border: 1px solid #ccc;
    padding: 0.2em;
    background: white;
@@ -74,9 +96,6 @@ h3              { float: right;}
 }
 .adminandmod li
 {
-    margin-top: 20px;
-    margin-right: 10px;
-    margin-left: 0px;
     padding: 5px 5px 5px 0px;
     list-style-type: none;
 }
@@ -90,17 +109,22 @@ h3              { float: right;}
   border: 0;
   background: transparent;
   margin-right: 10px;
+  padding: 0px;
 }
 button.like-button:hover    {
    background: #377BA8;
 }
-
+.neutral{
+     text-align: right;
+     display: inline;
+}
 .ghost-button {
   border-radius: 0;
   border: 0;
   background: transparent;
   float: right;
   margin-right: 10px;
+  padding: 0px;
 }
 button.ghost-button:hover    {
    background: #377BA8;
@@ -139,6 +163,18 @@ button.ghost-button:hover    {
    background: white;
    width: 70%;
 }
-.container {
+.mycontainer {
    font-size: 1em;
+}
+
+.fl_upld{width:300px;}
+#fl_inp{display:none;}
+.fl_upld label{
+cursor:pointer;
+background:#377BA8;
+border-radius:3px;
+padding:7px 15px;
+color:#fff;
+font-weight:bold;
+text-align: center;
 }

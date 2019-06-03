@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% block body %}
 <p>This is your communities:</p>
-<input align="right" type="button" value="Create new community" id="show">
+<input class="btn btn-primary btn-xs" align="right" type="button" value="Create new community" id="show">
 <br>
 <div id="content">
     {% if communities != None %}
@@ -19,17 +19,17 @@
     <p>Create community</p>
     <form class="harmless-form" action="{{ url_for('community.createcommunity') }}" method=post>
         <p>Title:</p>
-        <input type=text name=title required>
+        <input type=text name=title maxlength=30 required>
         <p>Type:</p>
         <select name="comtype">
             <option value="private">private</option>
             <option value="personal">personal</option>
             <option selected value="public">public</option>
         </select>
-        <br>
-        <input type=submit value=Create>
+        <p></p>
+        <input class="btn btn-primary" type=submit value=Create>
     </form>
-    <button id="close">Cancel</button>
+    <button class="btn btn-secondary" id="close">Cancel</button>
 </dialog>
 <script type=text/javascript>
 var dialog = document.querySelector('#dialog');

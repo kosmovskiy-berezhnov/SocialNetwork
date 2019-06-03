@@ -1,12 +1,12 @@
-from datetime import datetime
+
 
 from safrs import SAFRSBase
 
 from config import db
-from models.moderator import Moderator
-from models.post import Post
-from models.user import User
 
+from models.moderator import Moderator
+from models.user import User
+from sqlalchemy.dialects import postgresql
 
 class Community(SAFRSBase, db.Model):
     '''
@@ -17,26 +17,19 @@ class Community(SAFRSBase, db.Model):
     type = db.Column(db.String(30), nullable=False)
     rating = db.Column(db.Integer, nullable=False, default=0)
     creation_date = db.Column(db.DateTime, nullable=False, server_default=db.func.now())
-    banned_users = None
+    banned_users = db.Column(postgresql.ARRAY(db.String(30), dimensions=1), default=[])
     subscribe_table = db.Table('subscribeUsers', db.metadata,
-                               db.Column('com_id', db.Integer, db.ForeignKey(id), primary_key=True),
-                               db.Column('user_id', db.Integer, db.ForeignKey(User.id), primary_key=True)
+                               db.Column('com_id', db.Integer, db.ForeignKey(id,ondelete='CASCADE'), primary_key=True),
+                               db.Column('user_id', db.Integer, db.ForeignKey(User.id,ondelete='CASCADE'), primary_key=True)
                                )
-    subscribe_user = db.relationship(User, secondary=subscribe_table, cascade='all,delete', lazy='dynamic',
-                                     backref=db.backref("user_subscribe", cascade='all,delete'),
+    subscribe_user = db.relationship(User, secondary=subscribe_table, passive_deletes=True,
+                                     backref=db.backref("user_subscribe", passive_deletes=True),
                                      primaryjoin=subscribe_table.c.com_id == id,
                                      secondaryjoin=subscribe_table.c.user_id == User.id
                                      )
-    moderators_users = db.relationship(User, secondary='moderator', cascade='all,delete',
+    moderators_users = db.relationship(User, secondary='moderator', passive_deletes=True,
                                        primaryjoin=Moderator.com_id == id,
                                        secondaryjoin=Moderator.mod_id == User.id,
-                                       backref=db.backref("users_moderators", cascade='all,delete'))
-    post_table = db.Table('communityPosts', db.metadata,
-                          db.Column('com_id', db.Integer, db.ForeignKey(id), primary_key=True),
-                          db.Column('post_id', db.Integer, db.ForeignKey(Post.id), primary_key=True)
-                          )
-    community_posts = db.relationship(Post, secondary=post_table, cascade='all,delete',
-                                      backref=db.backref("posts_community", cascade='all,delete'))
-    # def __init__(self):
-    #
-    #     self.posts
+                                       backref=db.backref("users_moderators", passive_deletes=True))
+
+
