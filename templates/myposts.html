@@ -2,46 +2,22 @@
 {% block body %}
 
 <p>This is your posts:</p>
-<input align="right" type="button" value="Create new post" id="show">
-
-<dialog background-color=rgba(0, 0, 0, 0.8)>
-    <p>Enter title for your post. If you have html page, you should attach it below</p>
-    <form action="{{ url_for('create_post.createposts') }}" method=post enctype="multipart/form-data">
-        <dl>
-            <dt>Title:
-            <dd><input type=text name=title required>
-            <dt>Load html page:
-            <dd><input type="file" name="html_page" enctype="multipart/form-data">
-            <dd><input type=submit value=Create>
-        </dl>
-    </form>
-    <button id="close">Cancel</button>
-</dialog>
-
-<script type=text/javascript>
-var dialog = document.querySelector('dialog');
-document.querySelector('#show').onclick = function() {
-  dialog.showModal();;
-};
-document.querySelector('#close').onclick = function() {
-  dialog.close();
-};
 
 
-</script>
-
-{% for post in posts %}
-<article class="post">
-    <header>
-        <div>
-            <h1>{{ post.title }}</h1>
-            <div class="about">by {{ post.author}} on {{ post.creation_date.strftime('%Y-%m-%d') }}</div>
+<div id="content">
+    {% for post in posts %}
+    <article class="post">
+        <header>
+            <div>
+                <h1>{{ post.title }}</h1>
+                <div class="about">by {{ post.author}} on {{ post.creation_date.strftime('%Y-%m-%d') }}</div>
+            </div>
+        </header>
+        <div id="post{{ post.id}}" class="body">
+            {{ post.html_page| safe}}
         </div>
-    </header>
-    <div id="post{{ post.id}}" class="body">
-        {{ post.html_page| safe}}
-    </div>
-    <hr>
-</article>
-{% endfor %}
+        <hr>
+    </article>
+    {% endfor %}
+</div>
 {% endblock %}

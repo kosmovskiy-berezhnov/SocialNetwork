@@ -45,6 +45,10 @@ def is_subscribed(user_id, community_id):
     return user is not None
 
 
+def is_moderator(user_id, community_id):
+    moderator = Moderator.query.filter_by(mod_id=user_id, com_id=community_id).first()
+    return moderator is not None
+
 
 @mod.route('/createcommunity', methods=['POST'])
 def createcommunity():
@@ -64,7 +68,7 @@ def createcommunity():
         session['com_id'] = newcommunity.id
         db.session.commit()
         return render_template('community.html', posts=newcommunity.community_posts, com=newcommunity,
-                               is_subbed=is_subscribed(g.user, newcommunity))
+                               is_subbed=True)
     return redirect('/mycommunities')
 
 
@@ -78,13 +82,14 @@ def subscribecommunity():
     return redirect('/community')
 
 
-
 @mod.route('/com/<community_name>')
 def concrete_community(community_name):
     community = Community.query.filter_by(title=community_name).join(Community.community_posts, isouter=True).first()
     if community is not None:
+        session['com_id'] = community.id
         return render_template('community.html', posts=community.community_posts, com=community,
-                               is_subbed=is_subscribed(g.user.id, community.id))
+                               is_subbed=is_subscribed(g.user.id, community.id), iscom=True,
+                               moder=is_moderator(g.user.id, community.id))
     flash('community with such name does not exists')
     redirect('/community')
 
@@ -94,21 +99,32 @@ def community():
     st = request.args.get('val', '')
     if st != '':
         session['com_id'] = st
-    query= Community.query.filter_by(id=session['com_id']).join(Community.community_posts, isouter=True).join(
+    query = Community.query.filter_by(id=session['com_id']).join(Community.community_posts, isouter=True).join(
         Comment, Comment.comid == session['com_id'] and Comment.postid == Post.id, isouter=True)
     community = query.first()
-    return render_template('community.html', posts=community.community_posts, com=community)
+    return render_template('community.html', posts=community.community_posts, com=community, iscom=True,
+                           moder=is_moderator(g.user.id, community.id))
 
 
-@mod.route('/addpost', methods=['GET', 'POST'])
+@mod.route('/addpost', methods=['GET'])
 def addpost():
-    if request.method == 'POST':
-        id = request.form['id']
-        community = Community.query.filter_by(id=session['com_id']).first()
-        post = Post.query.filter_by(id=id).first()
-        community.community_posts.append(post)
-        db.session.add(community)
-        db.session.commit()
-        return redirect('/community')
-    data = Post.query.filter_by(author=g.user.username).order_by(Post.creation_date.desc()).all()
-    return render_template("addpost.html", posts=data)
+    community = Community.query.filter_by(id=session['com_id']).first()
+    post = Post.query.filter_by(id=session['created_post']).first()
+    community.community_posts.append(post)
+    db.session.add(community)
+    db.session.commit()
+    session.pop('created_post', None)
+    return redirect('/community')
+
+
+@mod.route('/', methods=['GET'])
+def allcommunities():
+    query = Community.query.filter(type != 'private').join(Community.community_posts, isouter=True).order_by(
+        Post.id.desc()).limit(100)
+    data = query.all()
+    ans = []
+    for com in data:
+        if com.community_posts != []:
+            post = sorted(com.community_posts, key=lambda x: x.creation_date, reverse=True)[0]
+            ans.append((com, post))
+    return render_template("home.html", communities=ans)

@@ -6,6 +6,18 @@ mod = Blueprint('notifications', __name__)
 from config import db
 from models.user import User
 from models.notification import Notification
+from flask_login import current_user, login_required, login_user
+
+
+def addNotification(name, notification):
+    data = User.query.filter_by(username=name).all()[0].get_notifications()
+    n = Notification(g.user.username, notification, datetime.now())
+    if data == '[]':
+        data = "[" + json.dumps(n.toJSON()) + "]"
+    else:
+        data = '[' + json.dumps(n.toJSON()) + ',' + data[1:]
+    User.query.filter_by(username=name).update({"notifications": data})
+    db.session.commit()
 
 
 @mod.route('/mypage', methods=['GET'])
@@ -38,12 +50,5 @@ def deleteNotification():
 def createNotification():
     name = request.form['username']
     notification = request.form['notification']
-    data = User.query.filter_by(username=name).all()[0].get_notifications()
-    n = Notification(g.user.username, notification, datetime.now())
-    if data == None:
-        data = "[" + json.dumps(n.toJSON()) + "]"
-    else:
-        data = '[' + json.dumps(n.toJSON()) + ',' + data[1:]
-    User.query.filter_by(username=name).update({"notifications": data})
-    db.session.commit()
+    addNotification(name, notification)
     return redirect('/mypage')

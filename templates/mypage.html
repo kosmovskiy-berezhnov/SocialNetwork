@@ -3,43 +3,45 @@
 <p>This is your notifications:</p>
 <input align="right" type="button" value="Send Notification" id="show">
 <br>
-<ul class=entries>
+<div id="content">
     {% if notifications != None %}
     {% for n in notifications %}
-    <li><p><span class=mtext>{{ n['username'] }}</span> &nbsp&nbsp {{ n['creation_date'] }}</p>
+    <div>
+        <p><span class=mtext>{{ n['username'] }}</span> &nbsp&nbsp {{ n['creation_date'] }}</p>
         <form action="{{ url_for('notifications.deleteNotification') }}" method="post">
-            {{ n['text'] }}
+            {{ n['text'] | safe }}
             <input type="hidden" name="username" value="{{ n['username'] }}"/>
             <input type="hidden" name="creation_date" value="{{ n['creation_date'] }}"/>
             <input type="hidden" name="text" value="{{ n['text'] }}"/>
             <button class=ghost-button type="submit">X</button>
         </form>
-    </li>
+    </div>
     {% endfor %}
     {% endif %}
-</ul>
-
-<dialog background-color=rgba(0, 0, 0, 0.8)>
+</div>
+<dialog id = 'dialog' background-color=rgba(0, 0, 0, 0.8)>
     <p>Enter notification for user</p>
-    <form action="{{ url_for('notifications.createNotification') }}" method=post>
-        <dl>
-            <dt>Username:
-            <dd><input type=text name=username required>
-            <dt>Notification:
-            <dd><input type=text name=notification required>
-            <dd><input type=submit value=Send>
-        </dl>
+    <form class="harmless-form" action="{{ url_for('notifications.createNotification') }}" method=post>
+        <p>Username:</p>
+        <input type=text name=username required>
+        <p>Notification:</p>
+        <input type=text name=notification required>
+        <br>
+        <input type=submit value=Send>
     </form>
     <button id="close">Cancel</button>
 </dialog>
 <script type=text/javascript>
-var dialog = document.querySelector('dialog');
+var dialog = document.querySelector('#dialog');
 document.querySelector('#show').onclick = function() {
   dialog.showModal();;
 };
 document.querySelector('#close').onclick = function() {
   dialog.close();
 };
+
+
+
 
 
 

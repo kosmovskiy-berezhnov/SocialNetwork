@@ -20,7 +20,7 @@ def register():
             db.session.add(user)
             db.session.commit()
             flash('Registered successfully')
-            return redirect('/')
+            return redirect('/login')
         flash('User with this nickname already exists')
 
     return render_template("registration.html", form=form)

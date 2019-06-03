@@ -1,18 +1,20 @@
 import os
 from flask import Blueprint, Flask, request, session, g, redirect, url_for, render_template, flash, json
+from flask_login import login_user, logout_user, current_user
 from flask_sqlalchemy import SQLAlchemy
-from flask_login import login_user, logout_user
-from forms import LoginForm
 from werkzeug.security import check_password_hash
+
 from config import db
+from forms import LoginForm
 from models.user import User
+from models.administrator import Administrator
 mod = Blueprint('authorization', __name__)
 
 
 @mod.route('/login', methods=['GET', 'POST'])
 def login():
-    if g.user is not None and g.user.is_authenticated:
-        return redirect(url_for("main_page"))
+    if current_user.is_authenticated:
+        return redirect(url_for("community.allcommunities"))
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.login.data.lower()).first()
@@ -20,9 +22,11 @@ def login():
             flash("No user with such nickname")
         elif check_password_hash(user.password, form.password.data):
             login_user(user)
-            global current_id
-            current_id = user.id
-            return redirect(request.args.get('next') or url_for('home'))
+            admin = Administrator.query.filter_by(username=user.username).first()
+            if admin != None:
+                flash("Hello admin")
+                session['admin'] = True
+            return redirect(request.args.get('next') or url_for('community.allcommunities'))
         else:
             flash('Wrong password')
     return render_template('login.html', form=form)
@@ -30,6 +34,7 @@ def login():
 
 @mod.route('/logout')
 def logout():
+    session.clear()
     logout_user()
     flash('You were logged out')
-    return render_template('home.html')
+    return redirect(url_for('community.allcommunities'))

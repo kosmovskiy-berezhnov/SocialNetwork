@@ -5,37 +5,47 @@
 <div class="container">
     <div class=menu>
         <ol>
+            <li><a href="{{ url_for('community.allcommunities') }}"> News</a></li>
             <li><a href="{{ url_for('notifications.mypage') }}"> My&nbsp;page</a></li>
             <li><a href="{{ url_for('community.mycommunities') }}"> Communities</a></li>
             <li><a href="{{ url_for('create_post.myposts') }}"> My&nbsp;posts</a></li>
         </ol>
     </div>
     <div class=page>
-        Search<input type="text" name="search" value="">
-        {% if user_auth == 0 %}
+        <input type="text" name="search" placeholder="Search" size="100" id="findtext">
+        <button class="like-button" id="cancelsearch"><i class="fa fa-times" aria-hidden="true"></i></button>
+        <button class="like-button" type="submit" id="find">Search</button>
+        {% if current_user.is_anonymous %}
         <a href="{{ url_for('authorization.login') }}">log in</a>
-        <br>
-        Sort<select name="sort">
-        <option selected value="New">New</option>
-        <option value="Popular">Popular</option>
-        <option value="Top">Top</option>
-    </select>
-        <a href="{{ url_for('registration.register') }}">sign in</a>
         {% else %}
         <a href="{{ url_for('authorization.logout') }}">log out</a>
+        {% endif %}
         <br>
+        {% if iscom == 1 %}
+        <script type=text/javascript>
+            alert({{iscom}});
+
+
+
+        </script>
         Sort<select name="sort">
         <option selected value="New">New</option>
         <option value="Popular">Popular</option>
         <option value="Top">Top</option>
     </select>
-        <a> {{ session.name }} </a>
+        {% endif %}
+        {% if current_user.is_anonymous %}
+        <a href="{{ url_for('registration.register') }}">sign in</a>
+        {% else %}
+        <a> {{ current_user.username }} </a>
         {% endif %}
         {% for message in get_flashed_messages() %}
         <div class=flash>{{ message }}</div>
         {% endfor %}
     </div>
+
     <div class=interface>
+        {% if iscom == 1 and (session.admin or moder==True)%}
         <div class="adminandmod">
             Moderator interface:
             <ol>
@@ -45,16 +55,80 @@
                 <li><a href="{{ url_for('create_post.myposts') }}"> Appoint&nbsp;moderator</a></li>
             </ol>
         </div>
+        {% endif %}
+        {% if session.admin %}
         <div class="adminandmod">
             Administrator interface:
             <ol>
-                <li><a href="{{ url_for('notifications.mypage') }}"> Appoint&nbsp;administrator</a></li>
-                <li><a href="{{ url_for('community.mycommunities') }}"> Send&nbsp;newsLetter</a></li>
+                <li>
+                    <button class=ghost-button type="submit" id="appoint">Appoint&nbsp;administrator</button>
+                </li>
+                <li>
+                    <button class=ghost-button type="submit" id="newsletter">Send&nbsp;newsletter</button>
+                </li>
             </ol>
         </div>
+        {% endif %}
     </div>
+    <dialog id = 'dappoint' background-color=rgba(0, 0, 0, 0.8)>
+        <p>Appoint administrator</p>
+        <form class="harmless-form" action="{{ url_for('admin.appointadmin') }}" method=post>
+            <p>Username:</p>
+            <input type=text name=username required>
+            <input type=submit value=Appoint>
+        </form>
+        <button id="closeapp">Cancel</button>
+    </dialog>
+    <dialog id = 'dnewsletter' background-color=rgba(0, 0, 0, 0.8)>
+        <p>Send newsletter</p>
+        <form class="harmless-form" action="{{ url_for('admin.newsletter') }}" method=post>
+            <p>Notification:</p>
+            <input type=text name=notification required>
+            <input type=submit value=Send>
+        </form>
+        <button id="closenewsletter">Cancel</button>
+    </dialog>
     <div class="content">
         {% block body %}{% endblock %}
     </div>
 </div>
 
+<script type=text/javascript>
+
+document.querySelector('#find').onclick = function() {
+findinf = document.getElementById('findtext').value;
+ob = document.getElementById('content');
+
+for(var i=0; i<ob.children.length; i++){
+    chtml=ob.children[i].textContent.toLowerCase();
+    if(chtml.indexOf(findinf.toLowerCase()) == -1)
+    {
+        ob.children[i].style.display='none';
+    }
+}
+};
+
+document.querySelector('#cancelsearch').onclick = function() {
+ob = document.getElementById('content');
+document.getElementById('findtext').value = '';
+for(var i=0; i<ob.children.length; i++){
+    ob.children[i].style.display='block';
+}
+};
+
+var dappoint = document.querySelector('#dappoint');
+document.querySelector('#appoint').onclick = function() {
+  dappoint.showModal();
+};
+document.querySelector('#closeapp').onclick = function() {
+  dappoint.close();
+};
+var dnewsletter = document.querySelector('#dnewsletter');
+document.querySelector('#newsletter').onclick = function() {
+  dnewsletter.showModal();
+};
+document.querySelector('#closenewsletter').onclick = function() {
+  dnewsletter.close();
+};
+
+</script>

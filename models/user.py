@@ -13,7 +13,8 @@ class User(SAFRSBase, db.Model):
     username = db.Column(db.String(30), unique=True, nullable=False)
     rating = db.Column(db.Integer, nullable=False, default=0)
     password = db.Column(db.String(128), nullable=False)
-    notifications = db.Column(JSON, nullable=True)
+    notifications = db.Column(JSON, nullable=True, default ='[]')
+    #communities =
 
     # def __init__(self, username, password):
     #   self.username = username

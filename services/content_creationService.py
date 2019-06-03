@@ -52,6 +52,5 @@ def addimage():
 
 @mod.route('/myposts', methods=['GET'])
 def myposts():
-    session.pop('created_post', None)
     data = Post.query.filter_by(author=g.user.username).order_by(Post.creation_date.desc()).all()
     return render_template('myposts.html', posts=data)
