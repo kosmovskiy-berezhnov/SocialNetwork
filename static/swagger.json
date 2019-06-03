@@ -1,0 +1,56 @@
+{
+  "openapi": "3.0.0",
+  "info" :
+  {
+  "description" : "this is a university project from Daniil Kosmovskiy and Nikita Berezhnov",
+  "version" : "1.0.0",
+  "title": "SocialNetwork",
+  "contact": "kosmovskiy.daniil@gmail.com"
+  },
+  "host": "127.0.0.1",
+  "basepath": "/models",
+  "tags": 
+  {
+    "user": {
+    "id": {
+      "type": "int",
+      "format": "int"
+    },
+    "username": {
+      "type": "string",
+      "format": "string"
+    },
+    "rating": {
+      "type": "int"      
+    },
+    "password": {
+      "type": "string"
+    },
+    "notifications": {
+      "type": "json"
+    }
+    }
+    
+  },
+  "paths": {
+    "/user": {
+      "post": {
+        "tags": "users",
+        "responces": {
+          "405": {
+            "description": "invalid input"
+          }
+        }
+      },
+      "put": {
+        "tags": "users",
+        "responces": {
+          "400": {
+            "description": "invalid id"
+          }
+        }
+      }
+    }
+  }
+  
+}
