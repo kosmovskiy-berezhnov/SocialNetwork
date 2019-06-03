@@ -24,10 +24,6 @@ def sort():
     elif type == 'top':
         data = Post.query.filter_by(commmunity=session['com_id']).join(Comment, Comment.postid == Post.id,
                                                                        isouter=True).order_by(Post.rating.desc()).all()
-    else:
-        data = Post.query.filter_by(commmunity=session['com_id']).join(Comment, Comment.postid == Post.id,
-                                                                       isouter=True).all()
-        data = sorted(data, key=lambda x: len(x.post_comments), reverse=True)
     is_subbed = False
     moder = False
     if not g.user.is_anonymous:

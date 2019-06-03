@@ -19,6 +19,7 @@ def createposts():
         flash('You cannot create post in this community')
         return redirect(url_for('community.allcommunities'))
     else:
+
         if request.method == 'POST':
             html_page = ''
             if 'html_page' in dict(request.files):

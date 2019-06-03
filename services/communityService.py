@@ -155,6 +155,6 @@ def allcommunities():
 def allpeople():
     query = db.session.query(User.username).filter(
         User.id == Moderator.mod_id and Moderator.com_id == session['com_id'])
-    moderators = query.all().limit(100)
+    moderators = query.all()
     users = User.query.join(User.user_subscribe).filter_by(id=session['com_id']).all()
     return render_template("allpeople.html", moderators=moderators, users=users)

@@ -3,7 +3,8 @@
 
 <h1>{{ com.title }}</h1>
 <p><a href="{{ url_for('community.allpeople') }}">People in community</a></p>
-<input align="right" type="button" value="Create new post" id="show" onclick="opendialog(this)" name="createpost">
+<input class="btn btn-primary" align="right" type="button" value="Create new post" id="show" onclick="opendialog(this)"
+       name="createpost">
 {% if is_subbed %}
 <form class="harmless-form" action="{{ url_for('community.unsubscribecommunity') }}" method="get">
     <button class=ghost-button type="submit">Unsubscribe</button>
@@ -52,7 +53,7 @@
             {{comment.text}}
             <form action="{{ url_for('userService.likecomment') }}" method="post">
                 <input type="hidden" name="comid" value="{{ comment.id }}"/>
-                <span class ='neutral'>{{comment.rating}}</span>
+                <span class='neutral'>{{comment.rating}}</span>
                 <button class="like-button" type="submit"><i class="fa fa-heart-o" aria-hidden="true"></i></button>
             </form>
         </div>
@@ -63,7 +64,7 @@
 <form action="{{ url_for('userService.addcomment') }}" method="post">
     <input type="hidden" name="postid" value="{{ post.id }}"/>
     <input type="text" name="text" maxlength=300>
-    <button type="submit">Comment</button>
+    <button class="btn btn-primary btn-xs" type="submit">Comment</button>
 </form>
 {% endfor %}
 
@@ -72,66 +73,76 @@
     <p> If you have html page, you should attach it below.</p>
     <form class="harmless-form" action="{{ url_for('create_post.createposts') }}" method=post
           enctype="multipart/form-data">
-        <p>Title:</p>
-        <input type=text name=title maxlength=30 required>
-        <p>Load html page:</p>
-        <input type="file" name="html_page" accept=".html">
-        <br>
-        <input type=submit value=Create>
+        <div class="form-group">
+            <p>Title:</p>
+            <input type=text name=title maxlength=30 required>
+            <div class="fl_upld">
+                <p>Load html page:</p>
+                <label><input id="fl_inp" type="file" name="html_page" accept=".html" onchange="this.form.submit()" >Choose file</label>
+            </div>
+
+        </div>
+        <input class="btn btn-primary" type=submit value=Create>
     </form>
-    <button onclick="closedialog(this)">Cancel</button>
+    <button class="btn btn-secondary" onclick="closedialog(this)">Cancel</button>
 </dialog>
 <dialog id='banuser' background-color=rgba(0, 0, 0, 0.8)>
     <p>Ban&nbsp;user</p>
     <form class="harmless-form" action="{{  url_for('moderator.banuser') }}" method=post>
         <p>Username:</p>
         <input type=text name=username required>
-        <input type=submit value=Ban>
+        <p></p>
+        <input class="btn btn-primary" type=submit value=Ban>
     </form>
-    <button onclick="closedialog(this)">Cancel</button>
+    <button class="btn btn-secondary" onclick="closedialog(this)">Cancel</button>
 </dialog>
 <dialog id='unbanuser' background-color=rgba(0, 0, 0, 0.8)>
     <p>Ubban&nbsp;user</p>
     <form class="harmless-form" action="{{  url_for('moderator.unbanuser') }}" method=post>
         <p>Username:</p>
         <input type=text name=username required>
-        <input type=submit value=Unban>
+        <p></p>
+        <input class="btn btn-primary" type=submit value=Unban>
     </form>
-    <button onclick="closedialog(this)">Cancel</button>
+    <button class="btn btn-secondary" onclick="closedialog(this)">Cancel</button>
 </dialog>
 <dialog id='deleteuser' background-color=rgba(0, 0, 0, 0.8)>
     <p>Delete user from the community!</p>
     <form class="harmless-form" action="{{ url_for('moderator.deleteuser') }}" method=post>
         <p>Username:</p>
         <input type=text name=username required>
-        <input type=submit value=Delete>
+        <p></p>
+        <input class="btn btn-primary" type=submit value=Delete>
     </form>
-    <button onclick="closedialog(this)">Cancel</button>
+    <button class="btn btn-secondary" onclick="closedialog(this)">Cancel</button>
 </dialog>
 <dialog id='deletecommunity' background-color=rgba(0, 0, 0, 0.8)>
     <p>Are you sure want to delete this community?</p>
     <form class="harmless-form" action="{{ url_for('moderator.deletecommunity') }}" method=post>
-        <input type=submit value=Yes>
+        <br>
+        <input class="btn btn-primary" type=submit value=Yes>
     </form>
-    <button onclick="closedialog(this)">No</button>
+    <button class="btn btn-secondary" onclick="closedialog(this)">No</button>
 </dialog>
 <dialog id='appointmoderator' background-color=rgba(0, 0, 0, 0.8)>
     <p>Appoint moderator</p>
     <form class="harmless-form" action="{{ url_for('moderator.appointmoderator') }}" method=post>
         <p>Username:</p>
         <input type=text name=username required>
-        <input type=submit value=Assign>
+        <p></p>
+        <input class="btn btn-primary" type=submit value=Assign>
     </form>
-    <button onclick="closedialog(this)">Cancel</button>
+    <button class="btn btn-secondary" onclick="closedialog(this)">Cancel</button>
 </dialog>
 <dialog id='adduser' background-color=rgba(0, 0, 0, 0.8)>
     <p>Add user to community</p>
     <form class="harmless-form" action="{{ url_for('moderator.adduser') }}" method=post>
         <p>Username:</p>
         <input type=text name=username required>
-        <input type=submit value=Add>
+        <p></p>
+        <input class="btn btn-primary" type=submit value=Add>
     </form>
-    <button onclick="closedialog(this)">Cancel</button>
+    <button class="btn btn-secondary" onclick="closedialog(this)">Cancel</button>
 </dialog>
 <script type=text/javascript>
 function closedialog(thisButton){
@@ -140,6 +151,9 @@ function closedialog(thisButton){
 function opendialog(thisButton){
     document.querySelector('#'+thisButton.name).showModal();
 };
+
+
+
 
 
 

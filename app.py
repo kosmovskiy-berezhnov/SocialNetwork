@@ -1,6 +1,5 @@
-import os
-from flask import Flask, request, session, g, redirect, url_for, render_template, flash, json
-from flask_login import current_user, login_required, login_user, LoginManager
+from flask import Flask, g
+from flask_login import current_user, LoginManager
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
@@ -14,10 +13,11 @@ lm = LoginManager()
 lm.init_app(app=app)
 lm.login_view = 'authorization.login'
 
-
 from cryptography.fernet import Fernet
+
 cipher_key = Fernet.generate_key()
 cipher = Fernet(cipher_key)
+
 
 @lm.user_loader
 def get_user(ident):
@@ -34,7 +34,12 @@ def shutdown_session(exception=None):
 def before_request():
     g.user = current_user
     g.id = 0 if not g.user.is_authenticated else g.user.id
+
+
+@app.after_request
+def after_request(response):
     db.session.close()
+    return response
 
 
 from services import notificationService

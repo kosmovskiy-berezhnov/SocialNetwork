@@ -56,6 +56,7 @@ def banuser():
         flash("User are baned")
         community.banned_users.append(user.username)
         db.session.add(community)
+        Community.query.filter_by(id=community.id).update({"banned_users": community.banned_users})
         db.session.commit()
     return redirect(url_for('community.concrete_community', community_name=community.title))
 
@@ -71,7 +72,7 @@ def unbanuser():
     else:
         flash("User are unbaned")
         community.banned_users.remove(user.username)
-        db.session.add(community)
+        Community.query.filter_by(id=community.id).update({"banned_users": community.banned_users})
         db.session.commit()
     return redirect(url_for('community.concrete_community', community_name=community.title))
 
@@ -112,7 +113,7 @@ def adduser():
             b = g.user.password[:32].encode()
             cipher_key = base64.urlsafe_b64encode(b)
             cipher = Fernet(cipher_key)
-            text=community.title.encode()
+            text=(community.title+':'+user.username).encode()
             encrypted_text = cipher.encrypt(text)
             encrypted_text=encrypted_text.decode()
             notification = '<p><font color ="green">Invitation for community ' + community.title + '</font></p>' + \
@@ -130,9 +131,9 @@ def adduser():
             cipher_key = base64.urlsafe_b64encode(b)
             cipher = Fernet(cipher_key)
             decrypted_text = cipher.decrypt(com, ttl=None)
-            comtitle =decrypted_text.decode()
+            comtitle,username =decrypted_text.decode().split(':')
             community = Community.query.filter_by(title=comtitle).first()
-            if community is None:
+            if community is None or username!=g.user.username:
                 flash('Permission denied')
             else:
                 flash('You subscribe!')
