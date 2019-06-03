@@ -1,8 +1,11 @@
-from app import db
+from safrs import SAFRSBase
+
+from config import db
 from datetime import datetime
 from models.user import User
 
-class Comment(db.Model):
+
+class Comment(SAFRSBase, db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     text = db.Column(db.Text, nullable=False)
     rating = db.Column(db.Integer, nullable=False, default=0)

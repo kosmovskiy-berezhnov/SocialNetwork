@@ -1,3 +1,4 @@
+from models.comment import Comment
 from models.community import Community
 from models.moderator import Moderator
 from models.post import Post
@@ -9,3 +10,4 @@ def expose(api):
     api.expose_object(Moderator)
     api.expose_object(Post)
     api.expose_object(Community)
+    api.expose_object(Comment)
