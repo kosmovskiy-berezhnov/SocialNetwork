@@ -1,7 +1,7 @@
 from models.community import Community
 from models.moderator import Moderator
 from models.post import Post
-from .user import User
+from models.user import User
 
 
 def expose(api):

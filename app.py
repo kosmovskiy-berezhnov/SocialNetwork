@@ -29,9 +29,6 @@ app.register_blueprint(registrationService.mod)
 app.register_blueprint(authorizationService.mod)
 app.register_blueprint(communityService.mod)
 
-from initdb import db
-db.drop_all()
-db.create_all()
 
 if __name__ == '__main__':
     app.debug = True
