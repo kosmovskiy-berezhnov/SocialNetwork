@@ -1,11 +1,15 @@
-from app import db
+from safrs import SAFRSBase
+
+from config import db
 from sqlalchemy.dialects.postgresql import JSON
 from datetime import datetime
 from models.user import User
 
 
-
-class Post(db.Model):
+class Post(SAFRSBase, db.Model):
+    '''
+        description: Post
+    '''
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     title = db.Column(db.String(30), nullable=False)
     rating = db.Column(db.Integer, nullable=False, default=0)

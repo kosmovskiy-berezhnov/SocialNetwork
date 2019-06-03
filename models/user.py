@@ -1,15 +1,18 @@
 from sqlalchemy.dialects.postgresql import JSON
+from safrs import SAFRSBase
+# from app import db
+from config import db
 
-from app import db
 
-
-class User(db.Model):
+class User(SAFRSBase, db.Model):
+    '''
+        description: User description
+    '''
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String(30), unique=True, nullable=False)
     rating = db.Column(db.Integer, nullable=False, default=0)
     password = db.Column(db.String(30), nullable=False)
     notifications = db.Column(JSON, nullable=True)
-    #communities =
 
     # def __init__(self, username, password):
     #   self.username = username

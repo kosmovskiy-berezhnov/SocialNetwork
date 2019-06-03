@@ -2,7 +2,7 @@ import os
 from flask import Flask, Blueprint, request, session, g, redirect, url_for, render_template, flash, json
 from flask_sqlalchemy import SQLAlchemy
 
-from app import db
+from config import db
 from models.user import User
 
 mod = Blueprint('registration', __name__)

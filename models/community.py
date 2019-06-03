@@ -1,12 +1,17 @@
 from datetime import datetime
 
-from app import db
+from safrs import SAFRSBase
+
+from config import db
 from models.moderator import Moderator
 from models.post import Post
 from models.user import User
 
 
-class Community(db.Model):
+class Community(SAFRSBase, db.Model):
+    '''
+        description: a community of SocialNetwork
+    '''
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     title = db.Column(db.String(30), unique=True, nullable=False)
     type = db.Column(db.String(30), nullable=False)

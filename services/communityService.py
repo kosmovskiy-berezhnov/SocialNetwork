@@ -3,7 +3,7 @@ from flask import Blueprint, request, render_template, flash, g, session, redire
 from sqlalchemy import update
 
 mod = Blueprint('community', __name__)
-from app import db
+from config import db
 from models.user import User
 from models.community import Community
 from models.moderator import Moderator
