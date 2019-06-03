@@ -3,7 +3,7 @@ from flask import Flask, Blueprint, request, session, g, redirect, url_for, rend
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash
 from forms import RegisterForm
-from app import db
+from config import db
 from models.user import User
 
 mod = Blueprint('registration', __name__)

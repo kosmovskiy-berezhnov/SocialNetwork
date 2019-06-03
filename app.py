@@ -1,15 +1,13 @@
 import os
 from flask import Flask, request, session, g, redirect, url_for, render_template, flash, json
+# from flask_sqlalchemy import SQLAlchemy
+from safrs import SAFRS, SAFRSAPI, SAFRSBase
+from models.swagger_init import expose
+from config import app
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import current_user, login_required, login_user, LoginManager
 
 
-app = Flask(__name__)
-app.config.update(DEBUG=True, SECRET_KEY='secretkey',
-                  USERNAME='admin', PASSWORD='admin')
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:123@localhost:5432/socialNetwork'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
 lm = LoginManager()
 lm.init_app(app=app)
 lm.login_view = 'login'
@@ -25,11 +23,15 @@ def get_user(ident):
 def before_request():
     g.user = current_user
     g.id = 0 if not g.user.is_authenticated else g.user.id
+url_address = '127.0.0.1'
+api = SAFRSAPI(app, host=url_address, port=5000, prefix='/api/docs')
+app.app_context().push()
+expose(api)
 
 
 @app.route('/')
 def home():
-    return render_template('home.html', user_auth=g.user.is_authenticated)
+    return render_template('home.html')
 
 
 from services import notificationService
@@ -50,4 +52,4 @@ app.register_blueprint(userService.mod)
 
 if __name__ == '__main__':
     app.debug = True
-    app.run(host='127.0.0.1', port=5000, debug=True)
+    app.run(host=url_address, port=5000, debug=True)
