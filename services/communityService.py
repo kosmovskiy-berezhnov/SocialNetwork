@@ -66,9 +66,9 @@ def createcommunity():
     if check_community(title) is not None:
         flash('community with such name already exists')
     else:
+        nuser = db.session.query(User).filter_by(username=g.user.username).first()
         newcommunity = Community(title=title, type=comtype)
         # db.session.add(newcommunity)
-        nuser = db.session.query(User).filter_by(username=g.user.username).first()
         newcommunity.subscribers.append(nuser)
         newcommunity.mods.append(nuser)
         session['com_id'] = newcommunity.id
