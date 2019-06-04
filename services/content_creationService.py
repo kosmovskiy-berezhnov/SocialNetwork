@@ -1,10 +1,8 @@
 import os
 from flask import Blueprint, request, render_template, flash, g, session, redirect, url_for, json
-from config import db
-from models.post import Post
+from config import db, url_address
 from flask_login import login_required
 from models.post import Post
-from models.user import User
 from models.community import Community
 mod = Blueprint('create_post', __name__)
 
@@ -55,7 +53,7 @@ def addtext():
 def addimage():
     file = request.files['pic']
     file.save(os.path.join(os.path.split(os.path.dirname(__file__))[0], "static/images/", file.filename))
-    str = '<p><img src="http://127.0.0.1:5000/static/images/' + file.filename + '"width="auto" height="255"></p>\n'
+    str = '<p><img src="http://'+url_address + '/static/images/' + file.filename + '"width="auto" height="255"></p>\n'
     post = Post.query.filter_by(id=session['created_post']).first()
     post.html_page = post.html_page + str
     Post.query.filter_by(id=session['created_post']).update({"html_page": post.html_page})

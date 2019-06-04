@@ -2,7 +2,7 @@ from flask import g
 from flask_login import current_user, LoginManager
 from safrs import SAFRSAPI
 
-from config import app, db
+from config import app, db, url_address
 from models.swagger_init import expose
 
 lm = LoginManager()
@@ -27,7 +27,7 @@ def before_request():
     g.id = 0 if not g.user.is_authenticated else g.user.id
 
 
-url_address = '127.0.0.1'
+
 api = SAFRSAPI(app, host=url_address, port=5000, prefix='/api/docs')
 app.app_context().push()
 expose(api)
@@ -60,7 +60,6 @@ app.register_blueprint(adminService.mod)
 app.register_blueprint(sortService.mod)
 if __name__ == '__main__':
     try:
-        app.debug = True
-        app.run(host='127.0.0.1', port=5000, debug=True)
+        app.run(host=url_address, port=5000)
     finally:
         db.session.close()
