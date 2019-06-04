@@ -3,7 +3,6 @@ from flask_login import current_user, LoginManager
 from safrs import SAFRSAPI
 
 from config import app, db, url_address
-from initdb import us
 from models.administrator import Administrator
 from models.swagger_init import expose
 from models.user import User
@@ -60,18 +59,7 @@ app.register_blueprint(moderatorService.mod)
 app.register_blueprint(adminService.mod)
 app.register_blueprint(sortService.mod)
 if __name__ == '__main__':
-    u = db.session.query(User).all()
-    u.remove(u[0])
-    db.session.commit()
-    user = us()
-    db.session.commit()
-    db.session.add(user)
-    db.session.commit()
-    admin = Administrator(username="admin")
-    db.session.add(admin)
-    db.session.commit()
-
-try:
-    app.run(host=url_address, port=5000)
-finally:
-    db.session.close()
+    try:
+        app.run(host=url_address, port=5000)
+    finally:
+        db.session.close()

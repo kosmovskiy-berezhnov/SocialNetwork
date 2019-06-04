@@ -1,7 +1,10 @@
+from safrs import SAFRSBase
+
 from config import db
 
 
-class Administrator(db.Model):
+class Administrator(SAFRSBase, db.Model):
     from models.user import User
-    username = db.Column(db.ForeignKey(User.username, ondelete='CASCADE'), primary_key=True)
-    admin_users = db.relationship(User, lazy="joined",passive_deletes=True, backref=db.backref("admin_users",passive_deletes=True))
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user = db.relationship("User", backref=db.backref("admin", uselist=False))
