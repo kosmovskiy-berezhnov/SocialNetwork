@@ -3,7 +3,10 @@ from flask_login import current_user, LoginManager
 from safrs import SAFRSAPI
 
 from config import app, db, url_address
+from initdb import us
+from models.administrator import Administrator
 from models.swagger_init import expose
+from models.user import User
 
 lm = LoginManager()
 lm.init_app(app=app)
@@ -25,7 +28,6 @@ def get_user(ident):
 def before_request():
     g.user = current_user
     g.id = 0 if not g.user.is_authenticated else g.user.id
-
 
 
 api = SAFRSAPI(app, host=url_address, port=5000, prefix='/api/docs')
@@ -58,7 +60,18 @@ app.register_blueprint(moderatorService.mod)
 app.register_blueprint(adminService.mod)
 app.register_blueprint(sortService.mod)
 if __name__ == '__main__':
-    try:
-        app.run(host=url_address, port=5000)
-    finally:
-        db.session.close()
+    u = db.session.query(User).all()
+    u.remove(u[0])
+    db.session.commit()
+    user = us()
+    db.session.commit()
+    db.session.add(user)
+    db.session.commit()
+    admin = Administrator(username="admin")
+    db.session.add(admin)
+    db.session.commit()
+
+try:
+    app.run(host=url_address, port=5000)
+finally:
+    db.session.close()
