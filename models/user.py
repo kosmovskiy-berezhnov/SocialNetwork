@@ -4,8 +4,7 @@ from config import db
 from safrs import SAFRSBase
 
 
-
-class User(SAFRSBase, db.Model):
+class User(SAFRSBase, db.Model, UserMixin):
     '''
         description: User description
     '''

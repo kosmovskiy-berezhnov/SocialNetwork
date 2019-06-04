@@ -2,7 +2,7 @@ from werkzeug.security import generate_password_hash
 
 
 def init():
-    from app import db
+    from config import db
     from models.user import User
     from models.administrator import Administrator
     db.drop_all()
