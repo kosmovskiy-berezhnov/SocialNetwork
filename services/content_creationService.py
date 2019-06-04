@@ -47,17 +47,20 @@ def addtext():
     db.session.commit()
     return redirect('/createposts')
 
-
+from services import checkcontentService
 @mod.route('/addimage', methods=['POST'])
 @login_required
 def addimage():
     file = request.files['pic']
-    file.save(os.path.join(os.path.split(os.path.dirname(__file__))[0], "static/images/", file.filename))
-    str = '<p><img src="http://'+url_address + '/static/images/' + file.filename + '"width="auto" height="255"></p>\n'
-    post = Post.query.filter_by(id=session['created_post']).first()
-    post.html_page = post.html_page + str
-    Post.query.filter_by(id=session['created_post']).update({"html_page": post.html_page})
-    db.session.commit()
+    if checkcontentService.check_image(file.filename):
+        file.save(os.path.join(os.path.split(os.path.dirname(__file__))[0], "static/images/", file.filename))
+        str = '<p><img src="http://'+url_address + '/static/images/' + file.filename + '"width="auto" height="255"></p>\n'
+        post = Post.query.filter_by(id=session['created_post']).first()
+        post.html_page = post.html_page + str
+        Post.query.filter_by(id=session['created_post']).update({"html_page": post.html_page})
+        db.session.commit()
+    else:
+        flash("Not unique content")
     return redirect('/createposts')
 
 

@@ -13,10 +13,10 @@
 <div class="mycontainer">
     <div class=menu>
         <ol>
-            <li><a class = 'bigg' href="{{ url_for('community.allcommunities') }}"> News</a></li>
-            <li><a class = 'bigg' href="{{ url_for('notifications.mypage') }}"> My&nbsp;page</a></li>
-            <li><a class = 'bigg' href="{{ url_for('create_post.myposts') }}"> My&nbsp;posts</a></li>
-            <li><a class = 'bigg' href="{{ url_for('community.mycommunities') }}"> Communities</a></li>
+            <li><a class='bigg' href="{{ url_for('community.allcommunities') }}"> News</a></li>
+            <li><a class='bigg' href="{{ url_for('notifications.mypage') }}"> My&nbsp;page</a></li>
+            <li><a class='bigg' href="{{ url_for('create_post.myposts') }}"> My&nbsp;posts</a></li>
+            <li><a class='bigg' href="{{ url_for('community.mycommunities') }}"> Communities</a></li>
         </ol>
     </div>
     <div class=mypage>
@@ -28,7 +28,9 @@
         {% else %}
         <a href="{{ url_for('authorization.logout') }}">log out</a>
         {% endif %}
+        {% if iscom == 1 %}
         <br>
+        <input class=like-button type="button" value="Check content" id="protect">
         {% if iscom == 1 %}
         <form class="harmless-form" action="{{ url_for('admin.appointadmin') }}" method=post>
             <select name="sort" onchange=this.form.submit()>
@@ -50,7 +52,7 @@
     <div class=interface>
         {% if iscom == 1 and (session.admin or moder==True)%}
         <div class="adminandmod">
-             <span class=mtext >Moderator&nbsp;interface</span>:
+            <span class=mtext>Moderator&nbsp;interface</span>:
             <ol>
                 <li>
                     <button class=like-button onclick="opendialog(this)" name="adduser">Add&nbsp;user</button>
@@ -78,7 +80,7 @@
         {% endif %}
         {% if session.admin %}
         <div class="adminandmod">
-            <span class=mtext >Admin&nbsp;interface:</span>
+            <span class=mtext>Admin&nbsp;interface:</span>
             <ol>
                 <li>
                     <button class=like-button type="submit" id="appoint">Appoint&nbsp;administrator</button>
@@ -109,6 +111,18 @@
             <input class="btn btn-primary" type=submit value=Send>
         </form>
         <button class="btn btn-secondary" id="closenewsletter">Cancel</button>
+    </dialog>
+    <dialog id='dprotect' background-color=rgba(0, 0, 0, 0.8)>
+        <p>Check image</p>
+        <form class="harmless-form" action="{{ url_for('checkcontent.checkimage') }}" method=post
+              enctype="multipart/form-data">
+                <div class="fl_upld">
+                    <label><input id="fl_inp" type="file" name="pic" accept=".html" onchange="this.form.submit()">Choose
+                        file</label>
+                </div>
+            <input class="btn btn-primary" type=submit value=Create>
+        </form>
+        <button class="btn btn-secondary" id="closeprotect">Cancel</button>
     </dialog>
     <div class="content">
         {% block body %}
@@ -153,5 +167,15 @@ document.querySelector('#newsletter').onclick = function() {
 document.querySelector('#closenewsletter').onclick = function() {
   dnewsletter.close();
 };
+var dprotect = document.querySelector('#dprotect');
+document.querySelector('#protect').onclick = function() {
+  dnewsletter.showModal();
+};
+document.querySelector('#closeprotect').onclick = function() {
+  dnewsletter.close();
+};
+
+
+
 </script>
 </html>

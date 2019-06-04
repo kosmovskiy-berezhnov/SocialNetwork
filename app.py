@@ -27,7 +27,6 @@ def before_request():
     g.id = 0 if not g.user.is_authenticated else g.user.id
 
 
-
 api = SAFRSAPI(app, host=url_address, port=5000, prefix='/api/docs')
 app.app_context().push()
 expose(api)
@@ -47,6 +46,7 @@ from services import userService
 from services import adminService
 from services import moderatorService
 from services import sortService
+from services import checkcontentService
 
 app.register_blueprint(notificationService.mod)
 app.register_blueprint(content_creationService.mod)
@@ -57,6 +57,7 @@ app.register_blueprint(userService.mod)
 app.register_blueprint(moderatorService.mod)
 app.register_blueprint(adminService.mod)
 app.register_blueprint(sortService.mod)
+app.register_blueprint(checkcontentService.mod)
 if __name__ == '__main__':
     try:
         app.run(host=url_address, port=5000)
