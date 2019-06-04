@@ -1,6 +1,6 @@
 import os
 from flask import Blueprint, request, render_template, flash, g, session, redirect, url_for, json
-from config import db, url_address
+from config import db, url_address, port
 from flask_login import login_required
 from models.post import Post
 from models.community import Community
@@ -28,7 +28,7 @@ def createposts():
                 html_page = file.read().decode("utf-8")
             title = request.form['title']
             newpost = Post(title=title, html_page=html_page, author=g.user.username, community=session['com_id'])
-            db.sessizon.add(newpost)
+            db.session.add(newpost)
             db.session.commit()
             pid = Post.query.filter_by(author=g.user.username).order_by(Post.creation_date.desc()).first().id
             session['created_post'] = pid
@@ -41,9 +41,8 @@ def createposts():
 def addtext():
     text = request.form['text']
     text = '<p>' + text + '</p>'
-    post = Post.query.filter_by(id=session['created_post']).first()
+    post = db.session.query(Post).filter_by(id=session['created_post']).first()
     post.html_page = post.html_page + text
-    Post.query.filter_by(id=session['created_post']).update({"html_page": post.html_page})
     db.session.commit()
     return redirect('/createposts')
 
@@ -53,10 +52,9 @@ def addtext():
 def addimage():
     file = request.files['pic']
     file.save(os.path.join(os.path.split(os.path.dirname(__file__))[0], "static/images/", file.filename))
-    str = '<p><img src="http://'+url_address + '/static/images/' + file.filename + '"width="auto" height="255"></p>\n'
-    post = Post.query.filter_by(id=session['created_post']).first()
-    post.html_page = post.html_page + str
-    Post.query.filter_by(id=session['created_post']).update({"html_page": post.html_page})
+    strr = '<p><img src="http://'+url_address +':'+str(port)+ '/static/images/' + file.filename + '"width="auto" height="255"></p>\n'
+    post = db.session.query(Post).filter_by(id=session['created_post']).first()
+    post.html_page = post.html_page + strr
     db.session.commit()
     return redirect('/createposts')
 

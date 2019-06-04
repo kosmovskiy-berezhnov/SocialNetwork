@@ -16,7 +16,6 @@ def check_community(community_name):
 
 
 def is_subscribed(user_id, community_id):
-    с = Community.query.get(community_id)
     user = User.query.get(user_id)
     com = Community.query.filter_by(id=community_id).join(Community.subscribe_user).filter_by(id=user_id).first()
     return com is not None
@@ -49,13 +48,9 @@ def unsubscribecommunity():
     user = db.session.query(User).filter_by(id=g.user.id).one()
     community = db.session.query(Community).filter_by(id=session['com_id']).first()
     community.subscribe_user.remove(user)
-    community.moderators_users.remove(user)
-    # db.session.add(community)
-    try:
-        db.session.commit()
-    except:
-        db.session.rollback()
-    community = community
+    if user in community.moderators_users:
+        community.moderators_users.remove(user)
+    db.session.commit()
     return redirect('/mycommunities')
 
 
@@ -85,7 +80,6 @@ def subscribecommunity():
     community = db.session.query(Community).filter_by(id=session['com_id']).first()
     community.subscribe_user.append(user)
     user.subscribe(community)
-    # db.session.add(community)
     try:
         db.session.commit()
     except:
@@ -120,10 +114,9 @@ def concrete_community(community_name):
 @mod.route('/addpost', methods=['GET'])
 @login_required
 def addpost():
-    community = Community.query.filter_by(id=session['com_id']).first()
-    post = Post.query.filter_by(id=session['created_post']).first()
+    community = db.session.query(Community).filter_by(id=session['com_id']).first()
+    post = db.session.query(Post).filter_by(id=session['created_post']).first()
     community.community_posts.append(post)
-    # db.session.add(community)
     db.session.commit()
     session.pop('created_post', None)
     return redirect(url_for('community.concrete_community', community_name=community.title))
@@ -136,7 +129,7 @@ def deletepost():
     post = Post.query.filter_by(id=postid).first()
     community = Community.query.filter_by(id=session['com_id']).first()
     if session['admin'] == True or post.author == g.user.username or g.user in community.moderators_users:
-        Post.query.filter_by(id=postid).delete()
+        db.session.query(Post).filter_by(id=postid).delete()
         db.session.commit()
         flash("Post deleted")
     else:
