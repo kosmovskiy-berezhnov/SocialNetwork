@@ -24,7 +24,7 @@ def appointmoderator():
         flash('moderator assigned!')
         if user not in community.moderators_users:
             community.moderators_users.append(user)
-            db.session.add(community)
+            # db.session.add(community)
             db.session.commit()
     else:
         flash('This user is not subscribed to the community!')
@@ -65,14 +65,14 @@ def banuser():
 @login_required
 def unbanuser():
     username = request.form['username']
-    user = User.query.filter_by(username=username).first()
-    community = Community.query.filter_by(id=session['com_id']).first()
+    user = db.session.query(User).filter_by(username=username).first()
+    community = db.session.query(Community).filter_by(id=session['com_id']).first()
     if user is None or user not in community.subscribe_user:
         flash("This user are not subscribe for this community")
     else:
         flash("User are unbaned")
         community.banned_users.remove(user.username)
-        Community.query.filter_by(id=community.id).update({"banned_users": community.banned_users})
+        db.session.query(Community).filter_by(id=community.id).update({"banned_users": community.banned_users})
         db.session.commit()
     return redirect(url_for('community.concrete_community', community_name=community.title))
 
@@ -82,8 +82,8 @@ def unbanuser():
 def deleteuser():
     flash('user deleted from the community!')
     username = request.form['username']
-    user = User.query.filter_by(username=username).first()
-    community = Community.query.filter_by(id=session['com_id']).first()
+    user = db.session.query(User).filter_by(username=username).first()
+    community = db.session.query(Community).filter_by(id=session['com_id']).first()
     if community.type != "private":
         flash("You can delete user from only private community")
     elif user is None or user not in community.subscribe_user:
@@ -92,7 +92,7 @@ def deleteuser():
         flash("You cannot delete moderator!")
     else:
         community.subscribe_user.remove(user)
-        db.session.add(community)
+        # db.session.add(community)
         db.session.commit()
     return redirect(url_for('community.concrete_community', community_name=community.title))
 
@@ -102,8 +102,8 @@ def deleteuser():
 def adduser():
     if request.method == 'POST':
         username = request.form['username']
-        user = User.query.filter_by(username=username).first()
-        community = Community.query.filter_by(id=session['com_id']).first()
+        user = db.session.query(User).filter_by(username=username).first()
+        community = db.session.query(Community).filter_by(id=session['com_id']).first()
         if user is None:
             flash("This user are not exist")
         elif user in community.subscribe_user:
@@ -122,7 +122,7 @@ def adduser():
         return redirect(url_for('community.concrete_community', community_name=community.title))
     else:
         mod = request.args.get('mod', '')
-        moder = User.query.filter_by(username=mod).first()
+        moder = db.session.query(User).filter_by(username=mod).first()
         if moder is None:
             flash('Permission denied')
         else:
@@ -131,14 +131,14 @@ def adduser():
             cipher_key = base64.urlsafe_b64encode(b)
             cipher = Fernet(cipher_key)
             decrypted_text = cipher.decrypt(com, ttl=None)
-            comtitle,username =decrypted_text.decode().split(':')
-            community = Community.query.filter_by(title=comtitle).first()
+            comtitle, username = decrypted_text.decode().split(':')
+            community = db.session.query(Community).filter_by(title=comtitle).first()
             if community is None or username!=g.user.username:
                 flash('Permission denied')
             else:
                 flash('You subscribe!')
                 community.subscribe_user.append(g.user)
-                db.session.add(community)
+                # db.session.add(community)
                 db.session.commit()
                 return redirect(url_for('community.concrete_community', community_name=community.title))
         return redirect(url_for('community.allcommunities'))

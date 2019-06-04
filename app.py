@@ -16,9 +16,9 @@ def get_user(ident):
     return User.query.get(int(ident))
 
 
-@app.teardown_appcontext
-def shutdown_session(exception=None):
-    db.session.remove()
+# @app.teardown_appcontext
+# def shutdown_session(exception=None):
+#     db.session.remove()
 
 
 @app.before_request
@@ -32,11 +32,10 @@ api = SAFRSAPI(app, host=url_address, port=5000, prefix='/api/docs')
 app.app_context().push()
 expose(api)
 
-
-@app.after_request
-def after_request(response):
-    db.session.close()
-    return response
+# @app.after_request
+# def after_request(response):
+#     db.session.close()
+#     return response
 
 
 from services import notificationService

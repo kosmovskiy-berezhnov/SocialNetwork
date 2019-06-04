@@ -2,8 +2,7 @@ from werkzeug.security import generate_password_hash
 
 
 def init():
-    from config import db
-
+    from config import d
     from models.user import User
     from models.administrator import Administrator
     db.create_all()

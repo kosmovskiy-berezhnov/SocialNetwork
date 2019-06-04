@@ -1,7 +1,5 @@
-from datetime import datetime
 from flask import Blueprint, request, render_template, flash, g, session, redirect, url_for, json
 from flask_login import login_required
-from sqlalchemy import update
 
 mod = Blueprint('community', __name__)
 from config import db
@@ -18,6 +16,8 @@ def check_community(community_name):
 
 
 def is_subscribed(user_id, community_id):
+    с = Community.query.get(community_id)
+    user = User.query.get(user_id)
     com = Community.query.filter_by(id=community_id).join(Community.subscribe_user).filter_by(id=user_id).first()
     return com is not None
 
@@ -46,12 +46,16 @@ def mycommunities():
 @mod.route('/unsubscribecommunity', methods=['GET'])
 @login_required
 def unsubscribecommunity():
-    user = User.query.filter_by(id=g.user.id).one()
-    community = Community.query.filter_by(id=session['com_id']).first()
+    user = db.session.query(User).filter_by(id=g.user.id).one()
+    community = db.session.query(Community).filter_by(id=session['com_id']).first()
     community.subscribe_user.remove(user)
     community.moderators_users.remove(user)
-    db.session.add(community)
-    db.session.commit()
+    # db.session.add(community)
+    try:
+        db.session.commit()
+    except:
+        db.session.rollback()
+    community = community
     return redirect('/mycommunities')
 
 
@@ -61,16 +65,13 @@ def createcommunity():
     title = request.form['title']
     comtype = request.form['comtype']
     if check_community(title) is not None:
-        flash('community with this name already exists')
+        flash('community with such name already exists')
     else:
         newcommunity = Community(title=title, type=comtype)
         db.session.add(newcommunity)
-        nuser = User.query.filter_by(username=g.user.username).first()
-        db.session.commit()
-        newcommunity = Community.query.filter_by(title=title).first()
+        nuser = db.session.query(User).filter_by(username=g.user.username).first()
         newcommunity.subscribe_user.append(nuser)
         newcommunity.moderators_users.append(nuser)
-        db.session.add(newcommunity)
         session['com_id'] = newcommunity.id
         db.session.commit()
         return redirect(url_for('community.concrete_community', community_name=newcommunity.title))
@@ -80,17 +81,22 @@ def createcommunity():
 @mod.route('/subscribecommunity', methods=['GET'])
 @login_required
 def subscribecommunity():
-    user = User.query.filter_by(id=session['user_id']).one()
-    community = Community.query.filter_by(id=session['com_id']).first()
+    user = db.session.query(User).filter_by(id=session['user_id']).one()
+    community = db.session.query(Community).filter_by(id=session['com_id']).first()
     community.subscribe_user.append(user)
-    db.session.add(community)
-    db.session.commit()
+    user.subscribe(community)
+    # db.session.add(community)
+    try:
+        db.session.commit()
+    except:
+        db.session.rollback()
+    community = community
     return redirect(url_for('community.concrete_community', community_name=community.title))
 
 
 @mod.route('/com/<community_name>')
 def concrete_community(community_name):
-    query = Community.query.filter_by(title=community_name).join(Community.community_posts, isouter=True)
+    query = db.session.query(Community).filter_by(title=community_name).join(Community.community_posts, isouter=True)
     community = query.first()
     if community is not None:
         if community.type == 'private' and g.user not in community.subscribe_user:
@@ -117,7 +123,7 @@ def addpost():
     community = Community.query.filter_by(id=session['com_id']).first()
     post = Post.query.filter_by(id=session['created_post']).first()
     community.community_posts.append(post)
-    db.session.add(community)
+    # db.session.add(community)
     db.session.commit()
     session.pop('created_post', None)
     return redirect(url_for('community.concrete_community', community_name=community.title))

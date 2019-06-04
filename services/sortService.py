@@ -13,7 +13,7 @@ mod = Blueprint('sort', __name__)
 
 @mod.route('/sort', methods=['GET'])
 def sort():
-    from communityService import is_moderator, is_subscribed
+    from .communityService import is_moderator, is_subscribed
     community = Community.query.filter_by(id=session['com_id']).first()
     type = request.form['sort']
     data = None

@@ -9,12 +9,15 @@ from models.user import User
 from models.community import Community
 mod = Blueprint('userService', __name__)
 
+
 @mod.before_request
 def before_request():
     community = Community.query.filter_by(id=session['com_id']).first()
     if g.user.username in community.banned_users:
         flash("You are banned!")
         return redirect(url_for('community.concrete_community', community_name=community.title))
+
+
 @mod.route('/addcomment', methods=['POST'])
 @login_required
 def addcomment():
@@ -86,6 +89,7 @@ def likecomment():
         Comment.query.filter_by(id=comid).update({"evaluatedusers": comment.evaluatedusers, "rating": comment.rating})
         db.session.commit()
     return redirect(url_for('community.concrete_community', community_name=community.title))
+
 
 @mod.route('/deleteprofile', methods=['GET'])
 @login_required

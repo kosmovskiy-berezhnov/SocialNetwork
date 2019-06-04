@@ -28,7 +28,7 @@ def createposts():
                 html_page = file.read().decode("utf-8")
             title = request.form['title']
             newpost = Post(title=title, html_page=html_page, author=g.user.username, community=session['com_id'])
-            db.session.add(newpost)
+            db.sessizon.add(newpost)
             db.session.commit()
             pid = Post.query.filter_by(author=g.user.username).order_by(Post.creation_date.desc()).first().id
             session['created_post'] = pid
