@@ -16,7 +16,6 @@ def check_community(community_name):
 
 
 def is_subscribed(user_id, community_id):
-    с = Community.query.get(community_id)
     user = User.query.get(user_id)
     com = Community.query.filter_by(id=community_id).join(Community.subscribe_user).filter_by(id=user_id).first()
     return com is not None
