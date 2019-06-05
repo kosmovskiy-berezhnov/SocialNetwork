@@ -18,13 +18,12 @@ mod = Blueprint('moderator', __name__)
 @login_required
 def appointmoderator():
     username = request.form['username']
-    user = User.query.filter_by(username=username)
-    community = Community.query.filter_by(id=session['com_id']).first()
+    user = db.session.query(User).filter_by(username=username)
+    community = db.session.query(Community).filter_by(id=session['com_id']).first()
     if user in community.subscribe_user:
         flash('moderator assigned!')
         if user not in community.moderators_users:
             community.moderators_users.append(user)
-            # db.session.add(community)
             db.session.commit()
     else:
         flash('This user is not subscribed to the community!')
@@ -34,10 +33,10 @@ def appointmoderator():
 @mod.route('/deletecommunity', methods=['POST'])
 @login_required
 def deletecommunity():
-    community = Community.query.filter_by(id=session['com_id']).first()
+    community = db.session.query(Community).filter_by(id=session['com_id']).first()
     if session['admin'] == True or (g.user in community.moderators_users and community != 'public'):
         flash('community deleted!')
-        Community.query.filter_by(id=session['com_id']).delete()
+        db.session.query(Community).filter_by(id=session['com_id']).delete()
         db.session.commit()
     else:
         flash("Permission denied")
@@ -48,15 +47,14 @@ def deletecommunity():
 @login_required
 def banuser():
     username = request.form['username']
-    user = User.query.filter_by(username=username).first()
-    community = Community.query.filter_by(id=session['com_id']).first()
+    user = db.session.query(User).filter_by(username=username).first()
+    community = db.session.query(Community).filter_by(id=session['com_id']).first()
     if user is None or user not in community.subscribe_user:
         flash("This user are not subscribe for this community")
     else:
         flash("User are baned")
-        community.banned_users.append(user.username)
-        db.session.add(community)
-        Community.query.filter_by(id=community.id).update({"banned_users": community.banned_users})
+        if user not in community.banned_users:
+            community.banned_users.append(user)
         db.session.commit()
     return redirect(url_for('community.concrete_community', community_name=community.title))
 
@@ -71,8 +69,8 @@ def unbanuser():
         flash("This user are not subscribe for this community")
     else:
         flash("User are unbaned")
-        community.banned_users.remove(user.username)
-        db.session.query(Community).filter_by(id=community.id).update({"banned_users": community.banned_users})
+        if user in community.banned_users:
+            community.banned_users.remove(user)
         db.session.commit()
     return redirect(url_for('community.concrete_community', community_name=community.title))
 
@@ -80,7 +78,6 @@ def unbanuser():
 @mod.route('/deleteuser', methods=['POST'])
 @login_required
 def deleteuser():
-    flash('user deleted from the community!')
     username = request.form['username']
     user = db.session.query(User).filter_by(username=username).first()
     community = db.session.query(Community).filter_by(id=session['com_id']).first()
@@ -91,8 +88,8 @@ def deleteuser():
     elif session['admin'] == False and user in community.moderators_users:
         flash("You cannot delete moderator!")
     else:
+        flash('user deleted from the community!')
         community.subscribe_user.remove(user)
-        # db.session.add(community)
         db.session.commit()
     return redirect(url_for('community.concrete_community', community_name=community.title))
 
@@ -110,7 +107,7 @@ def adduser():
             flash("This user are subscribe for this community")
         else:
             from services.notificationService import addNotification
-            b = g.user.password[:32].encode()
+            b = g.user.password[20:52].encode()
             cipher_key = base64.urlsafe_b64encode(b)
             cipher = Fernet(cipher_key)
             text=(community.title+':'+user.username).encode()
@@ -127,7 +124,7 @@ def adduser():
             flash('Permission denied')
         else:
             com =request.args.get('comid', '').encode()
-            b = moder.password[:32].encode()
+            b = moder.password[20:52].encode()
             cipher_key = base64.urlsafe_b64encode(b)
             cipher = Fernet(cipher_key)
             decrypted_text = cipher.decrypt(com, ttl=None)
@@ -137,8 +134,8 @@ def adduser():
                 flash('Permission denied')
             else:
                 flash('You subscribe!')
-                community.subscribe_user.append(g.user)
-                # db.session.add(community)
+                user = db.session.query(User).filter_by(username=g.user.username).first()
+                community.subscribe_user.append(user)
                 db.session.commit()
                 return redirect(url_for('community.concrete_community', community_name=community.title))
         return redirect(url_for('community.allcommunities'))

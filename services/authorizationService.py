@@ -23,7 +23,7 @@ def login():
         elif check_password_hash(user.password, form.password.data):
             login_user(user)
             session['admin'] = False
-            admin = Administrator.query.filter_by(user=user).first()
+            admin = Administrator.query.filter_by(username=user.username).first()
             if admin != None:
                 flash("Hello admin")
                 session['admin'] = True

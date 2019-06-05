@@ -17,7 +17,7 @@ def register():
         if user is None:
             user = User(username=form.login.data.lower(),
                         password=generate_password_hash(form.password.data))
-            # db.session.add(user)
+            db.session.add(user)
             db.session.commit()
             flash('Registered successfully')
             return redirect('/login')

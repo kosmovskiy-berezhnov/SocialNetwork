@@ -28,13 +28,13 @@
         {% else %}
         <a href="{{ url_for('authorization.logout') }}">log out</a>
         {% endif %}
-        {% if iscom == 1 %}
         <br>
-        <input class=like-button type="button" value="Check content" id="protect">
+        <button class=like-button type="button" id="protect">Check content</button>
         {% if iscom == 1 %}
-        <form class="harmless-form" action="{{ url_for('admin.appointadmin') }}" method=post>
+        <form class="harmless-form" action="{{ url_for('sort.sort') }}" method=post>
             <select name="sort" onchange=this.form.submit()>
-                <option selected value="New">New</option>
+                <option selected value=""></option>
+                <option value="New">New</option>
                 <option value="Top">Top</option>
             </select>
         </form>
@@ -114,15 +114,15 @@
     </dialog>
     <dialog id='dprotect' background-color=rgba(0, 0, 0, 0.8)>
         <p>Check image</p>
-        <form class="harmless-form" action="{{ url_for('checkcontent.checkimage') }}" method=post
-              enctype="multipart/form-data">
-                <div class="fl_upld">
-                    <label><input id="fl_inp" type="file" name="pic" accept=".html" onchange="this.form.submit()">Choose
-                        file</label>
-                </div>
-            <input class="btn btn-primary" type=submit value=Create>
-        </form>
-        <button class="btn btn-secondary" id="closeprotect">Cancel</button>
+        <div class="fl_upld">
+            <form class="harmless-form" action="{{ url_for('checkcontent.checkimage') }}" method=post
+                  enctype="multipart/form-data">
+
+                <label><input id="fl_inp" type="file" name="pic" onchange="this.form.submit()">Choose
+                    file</label>
+            </form>
+            <button class="btn btn-secondary" id="closeprotect">Cancel</button>
+        </div>
     </dialog>
     <div class="content">
         {% block body %}
@@ -167,13 +167,16 @@ document.querySelector('#newsletter').onclick = function() {
 document.querySelector('#closenewsletter').onclick = function() {
   dnewsletter.close();
 };
-var dprotect = document.querySelector('#dprotect');
+
+
+var ddprotect = document.querySelector('#dprotect');
 document.querySelector('#protect').onclick = function() {
-  dnewsletter.showModal();
+  ddprotect.showModal();
 };
 document.querySelector('#closeprotect').onclick = function() {
-  dnewsletter.close();
+  ddprotect.close();
 };
+
 
 
 
