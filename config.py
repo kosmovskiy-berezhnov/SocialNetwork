@@ -67,7 +67,7 @@ def create_app():
     app.register_blueprint(adminService.mod)
     app.register_blueprint(sortService.mod)
     with app.app_context():
-        #init()
+        init()
         create_api(app)
 
 

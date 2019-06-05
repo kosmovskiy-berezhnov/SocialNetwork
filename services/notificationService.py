@@ -12,7 +12,7 @@ from flask_login import current_user, login_required, login_user
 def addNotification(name, notification):
     user = db.session.query(User).filter_by(username=name).first()
     data = user.get_notifications()
-    n = Notification(g.user.username, notification, datetime.now())
+    n = Notification(g.user.username, notification, datetime.now().replace(microsecond=0))
 
     if data == '[]':
         data = "[" + json.dumps(n.toJSON()) + "]"

@@ -4,6 +4,7 @@ from config import db, url_address, port
 from flask_login import login_required
 from models.post import Post
 from models.community import Community
+from werkzeug.security import generate_password_hash
 mod = Blueprint('create_post', __name__)
 
 
@@ -51,7 +52,9 @@ def addtext():
 @login_required
 def addimage():
     file = request.files['pic']
+    file.filename=generate_password_hash(file.filename)[20:]
     file.save(os.path.join(os.path.split(os.path.dirname(__file__))[0], "static/images/", file.filename))
+
     strr = '<p><img src="http://'+url_address +':'+str(port)+ '/static/images/' + file.filename + '"width="auto" height="255"></p>\n'
     post = db.session.query(Post).filter_by(id=session['created_post']).first()
     post.html_page = post.html_page + strr
