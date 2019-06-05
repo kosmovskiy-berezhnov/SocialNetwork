@@ -11,18 +11,18 @@ from models.user import User
 mod = Blueprint('sort', __name__)
 
 
-@mod.route('/sort', methods=['GET'])
+@mod.route('/sort', methods=['POST'])
 def sort():
     from .communityService import is_moderator, is_subscribed
     community = Community.query.filter_by(id=session['com_id']).first()
     type = request.form['sort']
     data = None
-    if type == 'new':
-        data = Post.query.filter_by(commmunity=session['com_id']).join(Comment, Comment.postid == Post.id,
+    if type == 'New':
+        data = Post.query.filter_by(community=session['com_id']).join(Comment, Comment.postid == Post.id,
                                                                        isouter=True).order_by(
             Post.creation_date.desc()).all()
-    elif type == 'top':
-        data = Post.query.filter_by(commmunity=session['com_id']).join(Comment, Comment.postid == Post.id,
+    elif type == 'Top':
+        data = Post.query.filter_by(community=session['com_id']).join(Comment, Comment.postid == Post.id,
                                                                        isouter=True).order_by(Post.rating.desc()).all()
     is_subbed = False
     moder = False

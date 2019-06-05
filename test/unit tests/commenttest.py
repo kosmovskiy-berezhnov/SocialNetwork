@@ -3,12 +3,12 @@ import unittest
 
 from werkzeug.security import generate_password_hash
 
-
-from models.community import Community
+from config import db, create_app
 from models.comment import Comment
+from models.community import Community
 from models.post import Post
 from models.user import User
-from config import db, create_app
+
 
 class TestCase(unittest.TestCase):
     @classmethod
@@ -30,30 +30,29 @@ class TestCase(unittest.TestCase):
         db.session.commit()
         self.client = self.app.test_client()
 
-
     def commentcheck(self):
         data = Post.query.filter_by(id=1).one()
-        assert len(data.post_comments) == 1 and data.post_comments[0].text=='xaxa'
+        assert len(data.post_comments) == 1 and data.post_comments[0].text == 'xaxa'
 
     def likecomment(self):
         comment = db.session.query(Comment).filter_by(id=1).one()
         comment.rating = comment.rating + 1
         db.session.commit()
         comment = db.session.query(Comment).filter_by(id=1).one()
-        assert comment.rating==1
+        assert comment.rating == 1
 
     def addcomment(self):
         com = Comment(author='nik', text='aaa', postid=2)
         db.session.add(com)
         db.session.commit()
         data = Post.query.filter_by(id=2).one()
-        assert len(data.post_comments) == 1 and data.post_comments[0].text=='aaa'
+        assert len(data.post_comments) == 1 and data.post_comments[0].text == 'aaa'
 
     def deletecomment(self):
         com = db.session.query(Comment).filter_by(text='xaxa').delete()
         db.session.commit()
         data = Post.query.filter_by(id=1).one()
-        assert len(data.post_comments)==0
+        assert len(data.post_comments) == 0
 
 
 if __name__ == '__main__':

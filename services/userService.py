@@ -14,7 +14,7 @@ mod = Blueprint('userService', __name__)
 def before_request():
     if 'com_id' in session:
         community = Community.query.filter_by(id=session['com_id']).first()
-        if g.user.username in community.banned_users:
+        if g.user in community.banned_users:
             flash("You are banned!")
             return redirect(url_for('community.concrete_community', community_name=community.title))
 

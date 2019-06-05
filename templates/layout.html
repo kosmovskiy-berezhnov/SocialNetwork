@@ -31,9 +31,10 @@
         <br>
         <button class=like-button type="button"id="protect">Check content</button>
         {% if iscom == 1 %}
-        <form class="harmless-form" action="{{ url_for('admin.appointadmin') }}" method=post>
+        <form class="harmless-form" action="{{ url_for('sort.sort') }}" method=post>
             <select name="sort" onchange=this.form.submit()>
-                <option selected value="New">New</option>
+                <option selected value=""></option>
+                <option value="New">New</option>
                 <option value="Top">Top</option>
             </select>
         </form>

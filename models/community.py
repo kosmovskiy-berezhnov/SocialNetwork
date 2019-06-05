@@ -1,12 +1,9 @@
-
-
 from safrs import SAFRSBase
 
 from config import db
-
 from models.moderator import Moderator
 from models.user import User
-from sqlalchemy.dialects import postgresql
+
 
 class Community(SAFRSBase, db.Model):
     '''
@@ -17,11 +14,21 @@ class Community(SAFRSBase, db.Model):
     type = db.Column(db.String(30), nullable=False)
     rating = db.Column(db.Integer, nullable=False, default=0)
     creation_date = db.Column(db.DateTime, nullable=False, server_default=db.func.now())
-    banned_users = db.Column(postgresql.ARRAY(db.String(30), dimensions=1), default=[])
+    banned_table = db.Table('banned_users', db.metadata,
+                            db.Column('com_id', db.Integer, db.ForeignKey('community.id', ondelete='CASCADE'),
+                                      primary_key=True),
+                            db.Column('user_id', db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'),
+                                      primary_key=True))
+    banned_users = db.relationship(User, secondary=banned_table, passive_deletes=True,
+                                   backref=db.backref("banned_com", passive_deletes=True),
+                                   primaryjoin=banned_table.c.com_id == id,
+                                   secondaryjoin=banned_table.c.user_id == User.id)
     subscribe_table = db.Table('subscribeUsers', db.metadata,
-                               db.Column('com_id', db.Integer, db.ForeignKey(id,ondelete='CASCADE'), primary_key=True),
-                               db.Column('user_id', db.Integer, db.ForeignKey(User.id,ondelete='CASCADE'), primary_key=True)
+                               db.Column('com_id', db.Integer, db.ForeignKey(id, ondelete='CASCADE'), primary_key=True),
+                               db.Column('user_id', db.Integer, db.ForeignKey(User.id, ondelete='CASCADE'),
+                                         primary_key=True)
                                )
+
     subscribe_user = db.relationship(User, secondary=subscribe_table, passive_deletes=True,
                                      backref=db.backref("user_subscribe", passive_deletes=True),
                                      primaryjoin=subscribe_table.c.com_id == id,
@@ -31,5 +38,3 @@ class Community(SAFRSBase, db.Model):
                                        primaryjoin=Moderator.com_id == id,
                                        secondaryjoin=Moderator.mod_id == User.id,
                                        backref=db.backref("users_moderators", passive_deletes=True))
-
-

@@ -34,7 +34,7 @@ def mycommunities():
         query = db.session.query(User).filter_by(username=g.user.username).join(User.user_subscribe).limit(100)
         data = query.first()
         if data != None:
-            data = data.communities
+            data = data.user_subscribe
         else:
             data = []
     else:
@@ -79,7 +79,6 @@ def subscribecommunity():
     user = db.session.query(User).filter_by(id=session['user_id']).one()
     community = db.session.query(Community).filter_by(id=session['com_id']).first()
     community.subscribe_user.append(user)
-    user.subscribe(community)
     try:
         db.session.commit()
     except:
@@ -144,7 +143,7 @@ def allcommunities():
     data = query.all()
     ans = []
     for com in data:
-        if com.posts != []:
+        if com.community_posts != []:
             post = sorted(com.community_posts, key=lambda x: x.creation_date, reverse=True)[0]
             ans.append((com, post))
     return render_template("home.html", communities=ans)

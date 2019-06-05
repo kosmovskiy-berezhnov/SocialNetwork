@@ -53,10 +53,8 @@ def banuser():
         flash("This user are not subscribe for this community")
     else:
         flash("User are baned")
-        data = community.banned_users
-        data.append(user.username)
-        community.banned_users=data
-        db.session.add(community)
+        if user not in community.banned_users:
+            community.banned_users.append(user)
         db.session.commit()
     return redirect(url_for('community.concrete_community', community_name=community.title))
 
@@ -71,7 +69,8 @@ def unbanuser():
         flash("This user are not subscribe for this community")
     else:
         flash("User are unbaned")
-        community.banned_users.remove(user.username)
+        if user in community.banned_users:
+            community.banned_users.remove(user)
         db.session.commit()
     return redirect(url_for('community.concrete_community', community_name=community.title))
 
@@ -79,7 +78,6 @@ def unbanuser():
 @mod.route('/deleteuser', methods=['POST'])
 @login_required
 def deleteuser():
-    flash('user deleted from the community!')
     username = request.form['username']
     user = db.session.query(User).filter_by(username=username).first()
     community = db.session.query(Community).filter_by(id=session['com_id']).first()
@@ -90,6 +88,7 @@ def deleteuser():
     elif session['admin'] == False and user in community.moderators_users:
         flash("You cannot delete moderator!")
     else:
+        flash('user deleted from the community!')
         community.subscribe_user.remove(user)
         db.session.commit()
     return redirect(url_for('community.concrete_community', community_name=community.title))
@@ -135,8 +134,8 @@ def adduser():
                 flash('Permission denied')
             else:
                 flash('You subscribe!')
-                community.subscribe_user.append(g.user)
-                # db.session.add(community)
+                user = db.session.query(User).filter_by(username=g.user.username).first()
+                community.subscribe_user.append(user)
                 db.session.commit()
                 return redirect(url_for('community.concrete_community', community_name=community.title))
         return redirect(url_for('community.allcommunities'))

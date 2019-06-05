@@ -12,11 +12,10 @@ mod = Blueprint('create_post', __name__)
 @login_required
 def createposts():
     community = Community.query.filter_by(id=session['com_id']).first()
-    if community.type =='personal' and g.user not in community.moderators_users:
+    if (community.type =='personal' and g.user not in community.moderators_users) or g.user in community.banned_users:
         flash('You cannot create post in this community')
         return redirect(url_for('community.allcommunities'))
     else:
-
         if request.method == 'POST':
             html_page = ''
             if 'html_page' in dict(request.files):
@@ -53,7 +52,11 @@ from services import checkcontentService
 def addimage():
     file = request.files['pic']
     if checkcontentService.check_image(file.filename):
-        file.filename = generate_password_hash(file.filename)[20:]
+        from cryptography.fernet import Fernet
+        cipher_key = Fernet.generate_key()
+        cipher = Fernet(cipher_key)
+
+        file.filename = cipher.encrypt(file.filename.encode()).decode()
         file.save(os.path.join(os.path.split(os.path.dirname(__file__))[0], "static/images/", file.filename))
 
         strr = '<p><img src="http://' + url_address + ':' + str(
