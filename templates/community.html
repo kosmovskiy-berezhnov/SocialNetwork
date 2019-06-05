@@ -144,19 +144,5 @@
     </form>
     <button class="btn btn-secondary" onclick="closedialog(this)">Cancel</button>
 </dialog>
-<script type=text/javascript>
-function closedialog(thisButton){
-    thisButton.parentElement.close();
-};
-function opendialog(thisButton){
-    document.querySelector('#'+thisButton.name).showModal();
-};
 
-
-
-
-
-
-
-</script>
 {% endblock %}
