@@ -29,7 +29,7 @@
         <a href="{{ url_for('authorization.logout') }}">log out</a>
         {% endif %}
         <br>
-        <button class=like-button type="button" id="protect">Check content</button>
+        <button class=like-button onclick="opendialog(this)" name="protect">Check content</button>
         {% if iscom == 1 %}
         <form class="harmless-form" action="{{ url_for('sort.sort') }}" method=post>
             <select name="sort" onchange=this.form.submit()>
@@ -83,16 +83,16 @@
             <span class=mtext>Admin&nbsp;interface:</span>
             <ol>
                 <li>
-                    <button class=like-button type="submit" id="appoint">Appoint&nbsp;administrator</button>
+                    <button class=like-button onclick="opendialog(this)" name="appoint">Appoint&nbsp;administrator</button>
                 </li>
                 <li>
-                    <button class=like-button type="submit" id="newsletter">Send&nbsp;newsletter</button>
+                    <button class=like-button onclick="opendialog(this)" name="newsletter">Send&nbsp;newsletter</button>
                 </li>
             </ol>
         </div>
         {% endif %}
     </div>
-    <dialog id='dappoint' background-color=rgba(0, 0, 0, 0.8)>
+    <dialog id='appoint' background-color=rgba(0, 0, 0, 0.8)>
         <p>Appoint administrator</p>
         <form class="harmless-form" action="{{ url_for('admin.appointadmin') }}" method=post>
             <p>Username:</p>
@@ -100,9 +100,9 @@
             <p></p>
             <input class="btn btn-primary" type=submit value=Appoint>
         </form>
-        <button class="btn btn-secondary" id="closeapp">Cancel</button>
+        <button class="btn btn-secondary" onclick="closedialog(this)">Cancel</button>
     </dialog>
-    <dialog id='dnewsletter' background-color=rgba(0, 0, 0, 0.8)>
+    <dialog id='newsletter' background-color=rgba(0, 0, 0, 0.8)>
         <p>Send newsletter</p>
         <form class="harmless-form" action="{{ url_for('admin.newsletter') }}" method=post>
             <p>Notification:</p>
@@ -110,9 +110,9 @@
             <p></p>
             <input class="btn btn-primary" type=submit value=Send>
         </form>
-        <button class="btn btn-secondary" id="closenewsletter">Cancel</button>
+        <button class="btn btn-secondary" onclick="closedialog(this)">Cancel</button>
     </dialog>
-    <dialog id='dprotect' background-color=rgba(0, 0, 0, 0.8)>
+    <dialog id='protect' background-color=rgba(0, 0, 0, 0.8)>
         <p>Check image</p>
         <div class="fl_upld">
             <form class="harmless-form" action="{{ url_for('checkcontent.checkimage') }}" method=post
@@ -121,7 +121,7 @@
                 <label><input id="fl_inp" type="file" name="pic" onchange="this.form.submit()">Choose
                     file</label>
             </form>
-            <button class="btn btn-secondary" id="closeprotect">Cancel</button>
+            <button class="btn btn-secondary" onclick="closeclosedialog(this)">Cancel</button>
         </div>
     </dialog>
     <div class="content">
@@ -130,6 +130,18 @@
     </div>
 </div>
 
+<script type=text/javascript>
+function closedialog(thisButton){
+    thisButton.parentElement.close();
+};
+function closeclosedialog(thisButton){
+    thisButton.parentElement.parentElement.close();
+};
+function opendialog(thisButton){
+    document.querySelector('#'+thisButton.name).showModal();
+};
+
+</script>
 <script type=text/javascript>
 
 document.querySelector('#find').onclick = function() {
@@ -153,32 +165,9 @@ for(var i=0; i<ob.children.length; i++){
 }
 };
 
-var dappoint = document.querySelector('#dappoint');
-document.querySelector('#appoint').onclick = function() {
-  dappoint.showModal();
-};
-document.querySelector('#closeapp').onclick = function() {
-  dappoint.close();
-};
-var dnewsletter = document.querySelector('#dnewsletter');
-document.querySelector('#newsletter').onclick = function() {
-  dnewsletter.showModal();
-};
-document.querySelector('#closenewsletter').onclick = function() {
-  dnewsletter.close();
-};
-
-
-var ddprotect = document.querySelector('#dprotect');
-document.querySelector('#protect').onclick = function() {
-  ddprotect.showModal();
-};
-document.querySelector('#closeprotect').onclick = function() {
-  ddprotect.close();
-};
-
-
-
-
 </script>
+
+
+
+
 </html>
