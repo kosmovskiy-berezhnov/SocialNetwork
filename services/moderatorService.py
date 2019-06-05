@@ -108,7 +108,7 @@ def adduser():
             flash("This user are subscribe for this community")
         else:
             from services.notificationService import addNotification
-            b = g.user.password[:32].encode()
+            b = g.user.password[20:52].encode()
             cipher_key = base64.urlsafe_b64encode(b)
             cipher = Fernet(cipher_key)
             text=(community.title+':'+user.username).encode()
@@ -125,7 +125,7 @@ def adduser():
             flash('Permission denied')
         else:
             com =request.args.get('comid', '').encode()
-            b = moder.password[:32].encode()
+            b = moder.password[20:52].encode()
             cipher_key = base64.urlsafe_b64encode(b)
             cipher = Fernet(cipher_key)
             decrypted_text = cipher.decrypt(com, ttl=None)

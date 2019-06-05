@@ -28,9 +28,8 @@
         {% else %}
         <a href="{{ url_for('authorization.logout') }}">log out</a>
         {% endif %}
-        {% if iscom == 1 %}
         <br>
-        <input class=like-button type="button" value="Check content" id="protect">
+        <button class=like-button type="button"id="protect">Check content</button>
         {% if iscom == 1 %}
         <form class="harmless-form" action="{{ url_for('admin.appointadmin') }}" method=post>
             <select name="sort" onchange=this.form.submit()>

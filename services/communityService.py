@@ -17,7 +17,7 @@ def check_community(community_name):
 
 def is_subscribed(user_id, community_id):
     user = User.query.get(user_id)
-    com = Community.query.filter_by(id=community_id).join(Community.subscribers).filter_by(id=user_id).first()
+    com = Community.query.filter_by(id=community_id).join(Community.subscribe_user).filter_by(id=user_id).first()
     return com is not None
 
 
@@ -31,7 +31,7 @@ def is_moderator(user_id, community_id):
 def mycommunities():
     data = None
     if session['admin'] == False:
-        query = db.session.query(User).filter_by(username=g.user.username).join(User.communities).limit(100)
+        query = db.session.query(User).filter_by(username=g.user.username).join(User.user_subscribe).limit(100)
         data = query.first()
         if data != None:
             data = data.communities
@@ -64,9 +64,9 @@ def createcommunity():
     else:
         nuser = db.session.query(User).filter_by(username=g.user.username).first()
         newcommunity = Community(title=title, type=comtype)
-        # db.session.add(newcommunity)
-        newcommunity.subscribers.append(nuser)
-        newcommunity.mods.append(nuser)
+        db.session.add(newcommunity)
+        newcommunity.subscribe_user.append(nuser)
+        newcommunity.moderators_users.append(nuser)
         session['com_id'] = newcommunity.id
         db.session.commit()
         return redirect(url_for('community.concrete_community', community_name=newcommunity.title))
@@ -78,7 +78,7 @@ def createcommunity():
 def subscribecommunity():
     user = db.session.query(User).filter_by(id=session['user_id']).one()
     community = db.session.query(Community).filter_by(id=session['com_id']).first()
-    community.subscribers.append(user)
+    community.subscribe_user.append(user)
     user.subscribe(community)
     try:
         db.session.commit()
@@ -90,21 +90,21 @@ def subscribecommunity():
 
 @mod.route('/com/<community_name>')
 def concrete_community(community_name):
-    query = db.session.query(Community).filter_by(title=community_name).join(Community.posts, isouter=True)
+    query = db.session.query(Community).filter_by(title=community_name).join(Community.community_posts, isouter=True)
     community = query.first()
     if community is not None:
-        if community.type == 'private' and g.user not in community.subscribers:
+        if community.type == 'private' and g.user not in community.subscribe_user:
             flash('It is private community')
         else:
             session['com_id'] = community.id
-            query = query.join(Comment, Comment.post_id == Post.id, isouter=True)
+            query = query.join(Comment, Comment.postid == Post.id, isouter=True)
             community = query.first()
             is_subbed = False
             moder = False
             if not g.user.is_anonymous:
                 is_subbed = is_subscribed(g.user.id, community.id)
                 moder = is_moderator(g.user.id, community.id)
-            return render_template('community.html', posts=community.posts, com=community,
+            return render_template('community.html', posts=community.community_posts, com=community,
                                    is_subbed=is_subbed, iscom=True, moder=moder)
     else:
         flash('community with such name does not exists')
@@ -139,13 +139,13 @@ def deletepost():
 
 @mod.route('/', methods=['GET'])
 def allcommunities():
-    query = Community.query.filter(type != 'private').join(Community.posts, isouter=True).order_by(
+    query = Community.query.filter(type != 'private').join(Community.community_posts, isouter=True).order_by(
         Post.id.desc())
     data = query.all()
     ans = []
     for com in data:
         if com.posts != []:
-            post = sorted(com.posts, key=lambda x: x.creation_date, reverse=True)[0]
+            post = sorted(com.community_posts, key=lambda x: x.creation_date, reverse=True)[0]
             ans.append((com, post))
     return render_template("home.html", communities=ans)
 
@@ -155,5 +155,5 @@ def allpeople():
     query = db.session.query(User.username).filter(
         User.id == Moderator.mod_id and Moderator.com_id == session['com_id'])
     moderators = query.all()
-    users = db.session.query(User).join(User.communities).filter_by(id=session['com_id']).all()
+    users = db.session.query(User).join(User.user_subscribe).filter_by(id=session['com_id']).all()
     return render_template("allpeople.html", moderators=moderators, users=users)

@@ -61,6 +61,7 @@ def create_app():
     from services import adminService
     from services import moderatorService
     from services import sortService
+    from services import checkcontentService
     app.register_blueprint(notificationService.mod)
     app.register_blueprint(content_creationService.mod)
     app.register_blueprint(registrationService.mod)
@@ -70,8 +71,9 @@ def create_app():
     app.register_blueprint(moderatorService.mod)
     app.register_blueprint(adminService.mod)
     app.register_blueprint(sortService.mod)
+    app.register_blueprint(checkcontentService.mod)
     with app.app_context():
-        init()
+        #init()
         create_api(app)
 
     @app.before_request
