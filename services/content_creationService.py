@@ -5,6 +5,7 @@ from flask_login import login_required
 from models.post import Post
 from models.community import Community
 from werkzeug.security import generate_password_hash
+
 mod = Blueprint('create_post', __name__)
 
 
@@ -22,7 +23,7 @@ def createposts():
                 file = request.files['html_page']
                 str = file.filename.split('.')
                 if len(str) < 2 or str[len(str) - 1] != 'html':
-                    flash('Uncorrect format!')
+                    flash('Incorrect format!')
 
                     return redirect(url_for('community.concrete_community', community_name=community.title))
                 html_page = file.read().decode("utf-8")
@@ -46,12 +47,14 @@ def addtext():
     db.session.commit()
     return redirect('/createposts')
 
+
 from services import checkcontentService
 @mod.route('/addimage', methods=['POST'])
 @login_required
 def addimage():
     file = request.files['pic']
-    if checkcontentService.check_image(file.filename):
+    answer = checkcontentService.check_image(file.filename)
+    if not answer:
         from cryptography.fernet import Fernet
         cipher_key = Fernet.generate_key()
         cipher = Fernet(cipher_key)
@@ -59,13 +62,15 @@ def addimage():
         file.filename = cipher.encrypt(file.filename.encode()).decode()
         file.save(os.path.join(os.path.split(os.path.dirname(__file__))[0], "static/images/", file.filename))
 
+        from services.stegaService import hide_author
+        filename = hide_author(g.user, file.filename)
         strr = '<p><img src="http://' + url_address + ':' + str(
-            port) + '/static/images/' + file.filename + '"width="auto" height="255"></p>\n'
+            port) + '/static/images/' + filename + '"width="auto" height="255"></p>\n'
         post = db.session.query(Post).filter_by(id=session['created_post']).first()
         post.html_page = post.html_page + strr
         db.session.commit()
     else:
-        flash("Not unique content")
+        flash(answer)
     return redirect('/createposts')
 
 

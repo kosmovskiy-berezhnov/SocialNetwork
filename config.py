@@ -73,7 +73,7 @@ def create_app():
     app.register_blueprint(sortService.mod)
     app.register_blueprint(checkcontentService.mod)
     with app.app_context():
-        #init()
+        # init()
         create_api(app)
 
     @app.before_request

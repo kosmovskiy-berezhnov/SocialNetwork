@@ -40,7 +40,7 @@
         </form>
         {% endif %}
         {% if current_user.is_anonymous %}
-        <a href="{{ url_for('registration.register') }}">sign in</a>
+        <a href="{{ url_for('registration.register') }}">sign up</a>
         {% else %}
         <a> {{ current_user.username }} </a>
         {% endif %}

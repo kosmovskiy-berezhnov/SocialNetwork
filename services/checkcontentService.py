@@ -1,17 +1,25 @@
 import os
 from flask import Blueprint, request, render_template, flash, g, session, redirect, url_for, json
+
+from services.stegaService import find_message
+
 mod = Blueprint('checkcontent', __name__)
 
 
 def check_image(filename):
-    return not os.path.exists(os.path.join(os.path.split(os.path.dirname(__file__))[0], "static/images/", filename))
+    if os.path.exists(os.path.join(os.path.split(os.path.dirname(__file__))[0], "static/images/", filename)):
+        mess = find_message(filename)
+        if mess:
+            return mess
+    return False
 
 
 @mod.route('/checkimage', methods=['POST'])
 def checkimage():
     file = request.files['pic']
-    if check_image(file.filename):
-        flash("This image are unique!")
+    answer = check_image(file.filename)
+    if answer:
+        return "Not unique content, was made by " + answer
     else:
-        flash("Not unique content")
-    return redirect(url_for('community.allcommunities'))
+        flash("This image is unique!")
+        return True
