@@ -50,9 +50,9 @@ def banuser():
     user = db.session.query(User).filter_by(username=username).first()
     community = db.session.query(Community).filter_by(id=session['com_id']).first()
     if user is None or user not in community.subscribe_user:
-        flash("This user are not subscribe for this community")
+        flash("This user does not subscribed for this community")
     else:
-        flash("User are baned")
+        flash("User is baned")
         if user not in community.banned_users:
             community.banned_users.append(user)
         db.session.commit()
@@ -66,7 +66,7 @@ def unbanuser():
     user = db.session.query(User).filter_by(username=username).first()
     community = db.session.query(Community).filter_by(id=session['com_id']).first()
     if user is None or user not in community.subscribe_user:
-        flash("This user are not subscribe for this community")
+        flash("This user does not subscribed for this community")
     else:
         flash("User are unbaned")
         if user in community.banned_users:
@@ -84,7 +84,7 @@ def deleteuser():
     if community.type != "private":
         flash("You can delete user from only private community")
     elif user is None or user not in community.subscribe_user:
-        flash("This user are not subscribe for this community")
+        flash("This user is not subscribed for this community")
     elif session['admin'] == False and user in community.moderators_users:
         flash("You cannot delete moderator!")
     else:
@@ -102,9 +102,9 @@ def adduser():
         user = db.session.query(User).filter_by(username=username).first()
         community = db.session.query(Community).filter_by(id=session['com_id']).first()
         if user is None:
-            flash("This user are not exist")
+            flash("This user does not exist")
         elif user in community.subscribe_user:
-            flash("This user are subscribe for this community")
+            flash("This user is already subscribed to this community")
         else:
             from services.notificationService import addNotification
             b = g.user.password[20:52].encode()
@@ -133,7 +133,7 @@ def adduser():
             if community is None or username!=g.user.username:
                 flash('Permission denied')
             else:
-                flash('You subscribe!')
+                flash("You've subscribed!")
                 user = db.session.query(User).filter_by(username=g.user.username).first()
                 community.subscribe_user.append(user)
                 db.session.commit()

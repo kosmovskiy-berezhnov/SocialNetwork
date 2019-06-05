@@ -13,7 +13,7 @@ mod = Blueprint('admin', __name__)
 def appointadmin():
     username = request.form['username']
     if User.query.filter_by(username=username).first() is None:
-        flash('Cannot this user!')
+        flash('invalid user!')
     else:
         if Administrator.query.filter_by(username=username).first() is None:
             flash('admin assigned!')
@@ -21,7 +21,7 @@ def appointadmin():
             db.session.add(admin)
             db.session.commit()
         else:
-            flash('admin had already assigned!')
+            flash('admin has already been assigned!')
     return redirect(url_for('community.allcommunities'))
 
 

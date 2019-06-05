@@ -93,7 +93,7 @@ def concrete_community(community_name):
     community = query.first()
     if community is not None:
         if community.type == 'private' and g.user not in community.subscribe_user:
-            flash('It is private community')
+            flash('This is private community')
         else:
             session['com_id'] = community.id
             query = query.join(Comment, Comment.postid == Post.id, isouter=True)
@@ -130,7 +130,7 @@ def deletepost():
     if session['admin'] == True or post.author == g.user.username or g.user in community.moderators_users:
         db.session.query(Post).filter_by(id=postid).delete()
         db.session.commit()
-        flash("Post deleted")
+        flash("Post have been deleted")
     else:
         flash('Permission denied!')
     return redirect(url_for('community.concrete_community', community_name=community.title))
@@ -138,7 +138,7 @@ def deletepost():
 
 @mod.route('/', methods=['GET'])
 def allcommunities():
-    query = Community.query.filter(type != 'private').join(Community.community_posts, isouter=True).order_by(
+    query = Community.query.filter(Community.type != 'private').join(Community.community_posts, isouter=True).order_by(
         Post.id.desc())
     data = query.all()
     ans = []

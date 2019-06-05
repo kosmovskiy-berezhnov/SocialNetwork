@@ -54,7 +54,7 @@ def likepost():
             ok = True
             break
     if ok:
-        flash('You have already rated')
+        flash('You have already rated this post')
     else:
         post.rating = post.rating + 1
         val=db.session.query(db.func.avg(Post.rating)).filter_by(community=session['com_id']).first()
@@ -80,7 +80,7 @@ def likecomment():
             ok = True
             break
     if ok:
-        flash('You have already rated')
+        flash('You have already rated this comment')
     else:
         comment.rating = comment.rating + 1
         comment.evaluatedusers = g.user.username + ',' + comment.evaluatedusers
@@ -92,7 +92,7 @@ def likecomment():
 @login_required
 def deleteprofile():
     db.session.query(User).filter_by(id=g.user.id).delete()
-    flash('Your profile are deleted!!')
+    flash('Your profile have been deleted')
     logout_user()
     session.clear()
     db.session.commit()

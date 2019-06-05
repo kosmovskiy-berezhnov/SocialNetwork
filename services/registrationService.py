@@ -21,6 +21,6 @@ def register():
             db.session.commit()
             flash('Registered successfully')
             return redirect('/login')
-        flash('User with this nickname already exists')
+        flash('User with such nickname already exists')
 
     return render_template("registration.html", form=form)

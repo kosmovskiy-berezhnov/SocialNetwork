@@ -58,7 +58,7 @@ def createNotification():
     name = request.form['username']
     user = User.query.filter_by(username=name).first()
     if user is None:
-        flash("This user are not exist")
+        flash("This user does not exist")
     else:
         notification = request.form['notification']
         addNotification(name, notification)
