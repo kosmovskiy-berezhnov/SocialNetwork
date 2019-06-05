@@ -18,3 +18,6 @@ https://trello.com/socialnetwork60
 6) user#2 sees a post from user#1
 7) user#2 goes to the community
 8) user#2 subscribes to the community, rates post and leaves a comment
+
+# Web address
+http://165.22.247.239/
