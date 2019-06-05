@@ -19,7 +19,8 @@ def checkimage():
     file = request.files['pic']
     answer = check_image(file.filename)
     if answer:
-        return "Not unique content, was made by " + answer
+        flash("Not unique content, was made by " + answer)
+
     else:
         flash("This image is unique!")
-        return True
+    return redirect('/')
