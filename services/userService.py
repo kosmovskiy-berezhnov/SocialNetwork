@@ -12,10 +12,11 @@ mod = Blueprint('userService', __name__)
 
 @mod.before_request
 def before_request():
-    community = Community.query.filter_by(id=session['com_id']).first()
-    if g.user.username in community.banned_users:
-        flash("You are banned!")
-        return redirect(url_for('community.concrete_community', community_name=community.title))
+    if 'com_id' in session:
+        community = Community.query.filter_by(id=session['com_id']).first()
+        if g.user.username in community.banned_users:
+            flash("You are banned!")
+            return redirect(url_for('community.concrete_community', community_name=community.title))
 
 
 @mod.route('/addcomment', methods=['POST'])
