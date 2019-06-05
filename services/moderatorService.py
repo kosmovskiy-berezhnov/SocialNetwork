@@ -18,13 +18,12 @@ mod = Blueprint('moderator', __name__)
 @login_required
 def appointmoderator():
     username = request.form['username']
-    user = User.query.filter_by(username=username)
-    community = Community.query.filter_by(id=session['com_id']).first()
+    user = db.session.query(User).filter_by(username=username)
+    community = db.session.query(Community).filter_by(id=session['com_id']).first()
     if user in community.subscribe_user:
         flash('moderator assigned!')
         if user not in community.moderators_users:
             community.moderators_users.append(user)
-            # db.session.add(community)
             db.session.commit()
     else:
         flash('This user is not subscribed to the community!')
@@ -34,10 +33,10 @@ def appointmoderator():
 @mod.route('/deletecommunity', methods=['POST'])
 @login_required
 def deletecommunity():
-    community = Community.query.filter_by(id=session['com_id']).first()
+    community = db.session.query(Community).filter_by(id=session['com_id']).first()
     if session['admin'] == True or (g.user in community.moderators_users and community != 'public'):
         flash('community deleted!')
-        Community.query.filter_by(id=session['com_id']).delete()
+        db.session.query(Community).filter_by(id=session['com_id']).delete()
         db.session.commit()
     else:
         flash("Permission denied")
@@ -48,15 +47,16 @@ def deletecommunity():
 @login_required
 def banuser():
     username = request.form['username']
-    user = User.query.filter_by(username=username).first()
-    community = Community.query.filter_by(id=session['com_id']).first()
+    user = db.session.query(User).filter_by(username=username).first()
+    community = db.session.query(Community).filter_by(id=session['com_id']).first()
     if user is None or user not in community.subscribe_user:
         flash("This user are not subscribe for this community")
     else:
         flash("User are baned")
-        community.banned_users.append(user.username)
+        data = community.banned_users
+        data.append(user.username)
+        community.banned_users=data
         db.session.add(community)
-        Community.query.filter_by(id=community.id).update({"banned_users": community.banned_users})
         db.session.commit()
     return redirect(url_for('community.concrete_community', community_name=community.title))
 
@@ -72,7 +72,6 @@ def unbanuser():
     else:
         flash("User are unbaned")
         community.banned_users.remove(user.username)
-        db.session.query(Community).filter_by(id=community.id).update({"banned_users": community.banned_users})
         db.session.commit()
     return redirect(url_for('community.concrete_community', community_name=community.title))
 
@@ -92,7 +91,6 @@ def deleteuser():
         flash("You cannot delete moderator!")
     else:
         community.subscribe_user.remove(user)
-        # db.session.add(community)
         db.session.commit()
     return redirect(url_for('community.concrete_community', community_name=community.title))
 

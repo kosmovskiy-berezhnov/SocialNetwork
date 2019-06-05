@@ -36,7 +36,7 @@ def addcomment():
 def deletecomment():
     community = Community.query.filter_by(id=session['com_id']).first()
     comid = request.form['comid']
-    Comment.query.filter_by(id=comid).delete()
+    db.session.query(Comment).filter_by(id=comid).delete()
     db.session.commit()
     return redirect(url_for('community.concrete_community', community_name=community.title))
 
@@ -46,7 +46,7 @@ def deletecomment():
 def likepost():
     community = Community.query.filter_by(id=session['com_id']).first()
     postid = request.form['postid']
-    post = Post.query.filter_by(id=postid).one()
+    post = db.session.query(Post).filter_by(id=postid).one()
     users = post.evaluatedusers.split(',')
     ok = False
     for i in range(0, len(users)):
@@ -60,12 +60,9 @@ def likepost():
         val=db.session.query(db.func.avg(Post.rating)).filter_by(community=session['com_id']).first()
         community.rating = round(val[0])
         val=db.session.query(db.func.avg(Post.rating)).filter_by(author=post.author).first()
-        user=User.query.filter_by(username=post.author).first()
+        user=db.session.query(User).filter_by(username=post.author).first()
         user.rating= round(val[0])
         post.evaluatedusers = g.user.username + ',' + post.evaluatedusers
-        Post.query.filter_by(id=postid).update({"evaluatedusers": post.evaluatedusers, "rating": post.rating})
-        db.session.add(community)
-        db.session.add(g.user)
         db.session.commit()
     return redirect(url_for('community.concrete_community', community_name=community.title))
 
@@ -75,7 +72,7 @@ def likepost():
 def likecomment():
     community = Community.query.filter_by(id=session['com_id']).first()
     comid = request.form['comid']
-    comment = Comment.query.filter_by(id=comid).one()
+    comment = db.session.query(Comment).filter_by(id=comid).one()
     users = comment.evaluatedusers.split(',')
     ok = False
     for i in range(0, len(users)):
@@ -87,7 +84,6 @@ def likecomment():
     else:
         comment.rating = comment.rating + 1
         comment.evaluatedusers = g.user.username + ',' + comment.evaluatedusers
-        Comment.query.filter_by(id=comid).update({"evaluatedusers": comment.evaluatedusers, "rating": comment.rating})
         db.session.commit()
     return redirect(url_for('community.concrete_community', community_name=community.title))
 
@@ -95,7 +91,7 @@ def likecomment():
 @mod.route('/deleteprofile', methods=['GET'])
 @login_required
 def deleteprofile():
-    User.query.filter_by(id=g.user.id).delete()
+    db.session.query(User).filter_by(id=g.user.id).delete()
     flash('Your profile are deleted!!')
     logout_user()
     session.clear()

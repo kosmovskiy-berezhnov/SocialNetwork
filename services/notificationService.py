@@ -10,13 +10,15 @@ from flask_login import current_user, login_required, login_user
 
 
 def addNotification(name, notification):
-    data = User.query.filter_by(username=name).all()[0].get_notifications()
-    n = Notification(g.user.username, notification, datetime.now())
+    user = db.session.query(User).filter_by(username=name).first()
+    data = user.get_notifications()
+    n = Notification(g.user.username, notification, datetime.now().replace(microsecond=0))
+
     if data == '[]':
         data = "[" + json.dumps(n.toJSON()) + "]"
     else:
         data = '[' + json.dumps(n.toJSON()) + ',' + data[1:]
-    User.query.filter_by(username=name).update({"notifications": data})
+    user.notifications=data
     db.session.commit()
 
 
@@ -33,6 +35,8 @@ def mypage():
 @mod.route('/deleteNotification', methods=['POST'])
 @login_required
 def deleteNotification():
+    user = db.session.query(User).filter_by(username=g.user.username).first()
+    data = user.get_notifications()
     username = request.form['username']
     creation_date = request.form['creation_date']
     text = request.form['text']
@@ -43,7 +47,7 @@ def deleteNotification():
             notif.remove(notif[i])
             break
     jsonStr = json.dumps(notif)
-    User.query.filter_by(username=g.user.username).update({"notifications": jsonStr})
+    user.notifications = jsonStr
     db.session.commit()
     return redirect('/mypage')
 
