@@ -35,17 +35,5 @@ class TestCase(unittest.TestCase):
         admin = Administrator.query.all()
         assert len(admin) ==1
 
-    def test_reg(self):
-        user = User(username='nik',
-                    password=generate_password_hash('nik'))
-        db.session.add(user)
-        db.session.commit()
-        users = User.query.filter_by(username='nik').first()
-        assert users is not None
-
-    def hash_passwords(self):
-        user = User.query.filter_by(username='nik').first()
-        assert check_password_hash(user.password, 'nik')
-
 if __name__ == '__main__':
     unittest.main()

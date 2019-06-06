@@ -6,7 +6,7 @@ https://realtimeboard.com/app/board/o9J_kxmC-AE=/
 # Trello 
 https://trello.com/socialnetwork60
 # Swagger
-/api/docs
+http://165.22.247.239/api/docs
 # Video
 /video.avi
 # Video Scenario
