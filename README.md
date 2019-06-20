@@ -6,7 +6,7 @@ https://realtimeboard.com/app/board/o9J_kxmC-AE=/
 # Trello 
 https://trello.com/socialnetwork60
 # Swagger
-http://165.22.247.239/api/docs
+https://165.22.60.199/api/docs
 # Video
 /video.avi
 # Video Scenario
@@ -20,4 +20,4 @@ http://165.22.247.239/api/docs
 8) user#2 subscribes to the community, rates post and leaves a comment
 
 # Web address
-http://165.22.247.239/
+https://165.22.60.199
