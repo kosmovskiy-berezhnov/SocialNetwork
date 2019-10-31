@@ -1,4 +1,4 @@
-Werkzeug==0.14.1
+Werkzeug==0.15.3
 WTForms==2.2.1
 Flask_SQLAlchemy==2.3.2
 Stegano==0.9.4
